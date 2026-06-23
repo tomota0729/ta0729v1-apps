@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>漢字一覧（デバッグ）</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One&family=BIZ+UDPMincho&family=Noto+Serif+JP&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Kaisei+Opti&family=Yuji+Syuku&family=Noto+Sans+JP&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -20,12 +20,14 @@
     }
     .tab.active { background: #FF8C69; color: white; font-weight: bold; }
     .tab.disabled { opacity: 0.4; cursor: not-allowed; }
-    .tab.font-tab { background: #ddd; }
     .tab.font-tab.active { background: #9C27B0; color: white; }
     .stats { margin-bottom: 12px; color: #666; font-size: 0.9rem; }
 
     /* --- 通常一覧 --- */
-    #section-list table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    #section-list table {
+      width: 100%; border-collapse: collapse; background: white;
+      border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
     th { background: #FF8C69; color: white; padding: 10px 14px; text-align: left; font-size: 0.9rem; }
     td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
     tr:last-child td { border-bottom: none; }
@@ -33,60 +35,58 @@
     .kanji-cell { font-size: 1.8rem; text-align: center; width: 60px; }
     .on-badge {
       display: inline-block; background: #FFE0B2; color: #E65100;
-      border-radius: 4px; padding: 1px 6px; font-size: 0.8rem; font-weight: bold;
-      margin-right: 4px;
+      border-radius: 4px; padding: 1px 6px; font-size: 0.8rem; font-weight: bold; margin-right: 4px;
     }
     .kun-badge {
       display: inline-block; background: #E3F2FD; color: #1565C0;
-      border-radius: 4px; padding: 1px 6px; font-size: 0.8rem; font-weight: bold;
-      margin-right: 4px;
+      border-radius: 4px; padding: 1px 6px; font-size: 0.8rem; font-weight: bold; margin-right: 4px;
     }
 
     /* --- フォント比較 --- */
     #section-font { display: none; }
     #section-font.active { display: block; }
-    #section-list { display: block; }
     #section-list.hidden { display: none; }
 
+    .font-note {
+      margin-bottom: 12px; font-size: 0.8rem; color: #777;
+      background: white; border-radius: 8px; padding: 10px 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06); line-height: 1.6;
+    }
     .font-table-wrap { overflow-x: auto; }
     .font-table {
-      border-collapse: collapse;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
+      border-collapse: collapse; background: white;
+      border-radius: 12px; overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      min-width: 700px;
+      min-width: 900px;
     }
     .font-table th {
       background: #9C27B0; color: white;
-      padding: 10px 12px; font-size: 0.8rem;
-      text-align: center; white-space: nowrap;
+      padding: 8px 10px; font-size: 0.72rem;
+      text-align: center; white-space: nowrap; line-height: 1.4;
     }
-    .font-table th:first-child { background: #7B1FA2; width: 36px; }
+    .font-table th:first-child { background: #7B1FA2; width: 32px; font-size: 0.7rem; }
     .font-table td {
-      padding: 6px 10px; border-bottom: 1px solid #f0f0f0;
-      text-align: center; font-size: 2rem; line-height: 1;
+      padding: 4px 8px; border-bottom: 1px solid #f0f0f0;
+      text-align: center; font-size: 2.2rem; line-height: 1.1;
     }
     .font-table tr:last-child td { border-bottom: none; }
-    .font-table td:first-child { font-size: 0.75rem; color: #999; }
-    .font-table td.f1 { font-family: 'BIZ UDPMincho', serif; }
-    .font-table td.f2 { font-family: 'Noto Serif JP', serif; }
-    .font-table td.f3 { font-family: 'Yu Mincho', '游明朝', serif; }
-    .font-table td.f4 { font-family: 'UD Digi Kyokasho N-R', 'UDデジタル教科書体 N-R', serif; }
-    .font-table td.f5 { font-family: 'HGP教科書体', 'HG教科書体', serif; }
-    .font-table td.f6 { font-family: serif; }
+    .font-table tr:hover td { background: #f9f0ff; }
+    .font-table td:first-child { font-size: 0.7rem; color: #bbb; }
+
+    .f1 { font-family: 'Klee One', cursive; }
+    .f2 { font-family: 'BIZ UDPMincho', serif; }
+    .f3 { font-family: 'Noto Serif JP', serif; }
+    .f4 { font-family: 'Shippori Mincho', serif; }
+    .f5 { font-family: 'Shippori Mincho B1', serif; }
+    .f6 { font-family: 'Kaisei Opti', serif; }
+    .f7 { font-family: 'Yuji Syuku', serif; }
+    .f8 { font-family: 'Noto Sans JP', sans-serif; }
 
     .back-link {
       display: inline-block; margin-bottom: 16px;
       color: #FF8C69; text-decoration: none; font-size: 0.95rem;
     }
     .back-link:hover { text-decoration: underline; }
-
-    .font-note {
-      margin-bottom: 12px; font-size: 0.8rem; color: #888;
-      background: white; border-radius: 8px; padding: 10px 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
 
     @media (max-width: 480px) {
       .kanji-cell { font-size: 1.4rem; width: 46px; }
@@ -105,11 +105,7 @@
   <div id="section-list">
     <table>
       <thead>
-        <tr>
-          <th>#</th>
-          <th>漢字</th>
-          <th>読み</th>
-        </tr>
+        <tr><th>#</th><th>漢字</th><th>読み</th></tr>
       </thead>
       <tbody id="kanjiTable"></tbody>
     </table>
@@ -118,19 +114,22 @@
   <!-- フォント比較 -->
   <div id="section-font">
     <div class="font-note">
-      ※ 端末にインストールされていないフォントはブラウザの代替フォントで表示されます。
+      全てのフォントはGoogle Fontsから読み込んでいます。どの端末でも同じフォントが表示されます。<br>
+      ①Klee One は日本の学校教育の字形に近く、子どもの学習に適しています。
     </div>
     <div class="font-table-wrap">
       <table class="font-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>① BIZ UDPMincho</th>
-            <th>② Noto Serif JP</th>
-            <th>③ 游明朝</th>
-            <th>④ UD教科書体</th>
-            <th>⑤ HGP教科書体</th>
-            <th>⑥ serif標準</th>
+            <th>① Klee One<br><small>教科書体に近い</small></th>
+            <th>② BIZ UDPMincho<br><small>UD教科書体風</small></th>
+            <th>③ Noto Serif JP<br><small>標準明朝体</small></th>
+            <th>④ Shippori Mincho<br><small>伝統的明朝体</small></th>
+            <th>⑤ Shippori B1<br><small>太字明朝体</small></th>
+            <th>⑥ Kaisei Opti<br><small>細身明朝体</small></th>
+            <th>⑦ Yuji Syuku<br><small>書道・手書き</small></th>
+            <th>⑧ Noto Sans JP<br><small>ゴシック体</small></th>
           </tr>
         </thead>
         <tbody id="fontTable"></tbody>
@@ -141,13 +140,12 @@
   <script src="data.js"></script>
   <script>
     let currentGrade = 1;
-    let currentMode = 'list'; // 'list' or 'font'
+    let currentMode = 'list';
 
     function renderTabs() {
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = '';
 
-      // 学年タブ
       Object.entries(GRADE_INFO).forEach(([grade, info]) => {
         const btn = document.createElement('button');
         btn.className = 'tab' +
@@ -164,7 +162,6 @@
         tabs.appendChild(btn);
       });
 
-      // フォント比較タブ
       const fontBtn = document.createElement('button');
       fontBtn.className = 'tab font-tab' + (currentMode === 'font' ? ' active' : '');
       fontBtn.textContent = '🔤 フォント比較';
@@ -178,15 +175,8 @@
     }
 
     function showSection(mode) {
-      const listEl = document.getElementById('section-list');
-      const fontEl = document.getElementById('section-font');
-      if (mode === 'font') {
-        listEl.classList.add('hidden');
-        fontEl.classList.add('active');
-      } else {
-        listEl.classList.remove('hidden');
-        fontEl.classList.remove('active');
-      }
+      document.getElementById('section-list').classList.toggle('hidden', mode === 'font');
+      document.getElementById('section-font').classList.toggle('active', mode === 'font');
     }
 
     function renderTable() {
@@ -224,6 +214,8 @@
           <td class="f4">${item.kanji}</td>
           <td class="f5">${item.kanji}</td>
           <td class="f6">${item.kanji}</td>
+          <td class="f7">${item.kanji}</td>
+          <td class="f8">${item.kanji}</td>
         `;
         tbody.appendChild(tr);
       });
