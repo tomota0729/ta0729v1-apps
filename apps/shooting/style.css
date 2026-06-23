@@ -1,0 +1,245 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --space-bg: #0a0e27;
+  --neon: #4FC3F7;
+  --neon2: #7C4DFF;
+  --accent: #FFD54F;
+  --danger: #FF5252;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Klee One', 'Hiragino Maru Gothic Pro', 'BIZ UDPGothic', sans-serif;
+  background: radial-gradient(ellipse at top, #1a2151 0%, var(--space-bg) 70%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+}
+
+/* ---- ヘッダー ---- */
+.app-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 760px;
+  padding: 14px 18px;
+  gap: 12px;
+  z-index: 5;
+}
+.back-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+}
+.back-btn:active { transform: scale(0.9); }
+.app-title {
+  font-size: 1.45rem;
+  font-weight: 600;
+  text-shadow: 0 0 14px var(--neon);
+  letter-spacing: 1px;
+}
+/* ゲーム中はヘッダーを隠す */
+body.playing #appHeader { display: none; }
+
+/* ---- 画面切り替え ---- */
+.screen { display: none; width: 100%; }
+.screen.active { display: flex; flex-direction: column; align-items: center; flex: 1; }
+
+/* ---- 学年選択 ---- */
+#screen-grade { padding: 10px 20px 30px; max-width: 700px; }
+.lead { font-size: 1.3rem; margin: 18px 0 24px; text-shadow: 0 0 10px var(--neon2); }
+.hint { margin-top: 26px; color: #9fa8da; font-size: 0.92rem; }
+
+.grade-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+.grade-btn {
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 18px;
+  padding: 26px 14px;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  backdrop-filter: blur(4px);
+}
+.grade-btn .grade-label { font-size: 1.3rem; font-weight: 600; }
+.grade-btn .grade-count { font-size: 0.8rem; color: #9fa8da; }
+.grade-btn:not(.disabled):active { transform: scale(0.94); }
+.grade-btn:not(.disabled):hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(124,77,255,0.4);
+  border-color: var(--neon);
+}
+.grade-btn.disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ---- ゲーム画面 ---- */
+#screen-game { padding: 0; position: relative; }
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* HUD */
+.hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 16px;
+  pointer-events: none;
+  z-index: 4;
+}
+.hud-left { display: flex; flex-direction: column; gap: 4px; }
+.hud-score { font-size: 1rem; letter-spacing: 1px; text-shadow: 0 0 8px var(--neon); }
+.hud-score b { font-size: 1.3rem; color: var(--accent); }
+.hud-combo {
+  font-size: 1.1rem; font-weight: 600; color: var(--accent);
+  text-shadow: 0 0 12px var(--accent);
+  opacity: 0; transform: scale(0.6); transition: opacity .15s, transform .15s;
+}
+.hud-combo.show { opacity: 1; transform: scale(1); }
+.hud-right { display: flex; align-items: center; gap: 10px; pointer-events: auto; }
+.hud-lives { font-size: 1.2rem; letter-spacing: 2px; }
+.sound-btn, .quit-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; border-radius: 10px;
+  width: 38px; height: 38px; font-size: 1rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.sound-btn:active, .quit-btn:active { transform: scale(0.9); }
+
+/* 中央演出オーバーレイ */
+.stage-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+  text-align: center;
+}
+
+/* ---- 結果画面 ---- */
+#screen-result { justify-content: center; padding: 30px 20px; gap: 14px; max-width: 600px; margin: 0 auto; }
+.result-rank {
+  font-size: 2.2rem; font-weight: 600; color: var(--accent);
+  text-shadow: 0 0 22px var(--accent); letter-spacing: 2px;
+  animation: pop .5s ease;
+}
+.result-score { font-size: 1.3rem; letter-spacing: 1px; }
+.result-score .score-num { font-size: 2.6rem; color: var(--neon); text-shadow: 0 0 14px var(--neon); margin-left: 8px; }
+.result-message { font-size: 1.1rem; color: #c5cae9; }
+.result-stats {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 16px 22px;
+  font-size: 1rem; line-height: 1.9; text-align: center;
+  margin: 6px 0 14px;
+}
+.result-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  padding: 15px 26px; border: none; border-radius: 14px;
+  font-family: inherit; font-size: 1.05rem; font-weight: 600;
+  cursor: pointer; transition: transform 0.12s;
+}
+.btn:active { transform: scale(0.94); }
+.btn-primary { background: linear-gradient(135deg, var(--neon), var(--neon2)); color: #fff; box-shadow: 0 6px 18px rgba(124,77,255,0.45); }
+.btn-secondary { background: rgba(255,255,255,0.14); color: #fff; }
+
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* WARNING 点滅 */
+@keyframes warnFlash {
+  0%, 100% { opacity: 0; transform: scale(0.9); }
+  15%, 85% { opacity: 1; transform: scale(1); }
+  40%, 60% { opacity: 0.4; }
+}
+
+/* 読み方リール演出（中ボス・ボス撃破） */
+.reveal-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: rgba(10,14,39,0.78);
+  border: 2px solid var(--neon);
+  border-radius: 24px;
+  padding: 28px 44px;
+  box-shadow: 0 0 40px rgba(79,195,247,0.5);
+  animation: pop .35s ease;
+}
+.reveal-kanji {
+  font-size: 5rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 0 26px var(--neon);
+  line-height: 1;
+}
+.reveal-readings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.reveal-readings > div { display: flex; align-items: center; gap: 10px; justify-content: center; }
+.rv-badge {
+  font-size: 0.95rem;
+  border-radius: 6px;
+  padding: 2px 10px;
+}
+.rv-badge.on  { background: #FFE0B2; color: #E65100; }
+.rv-badge.kun { background: #BBDEFB; color: #0D47A1; }
+.reveal-clear {
+  font-size: 1.4rem;
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent);
+  animation: pop .5s ease .1s both;
+}
+
+@media (max-width: 500px) {
+  .grade-grid { grid-template-columns: repeat(2, 1fr); }
+  .app-title { font-size: 1.2rem; }
+}

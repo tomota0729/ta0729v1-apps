@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>漢字シューティング</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- 共通ヘッダー -->
+  <div class="app-header" id="appHeader">
+    <button class="back-btn" onclick="location.href='../../'">🏠</button>
+    <span class="app-title">🚀 漢字シューティング</span>
+  </div>
+
+  <!-- ① 学年選択 -->
+  <section class="screen active" id="screen-grade">
+    <p class="lead">がくねんを えらんでね！</p>
+    <div class="grade-grid" id="gradeGrid"></div>
+    <p class="hint">うちおとした かんじの よみかたを おぼえよう！</p>
+  </section>
+
+  <!-- ② ゲーム -->
+  <section class="screen" id="screen-game">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD -->
+    <div class="hud" id="hud">
+      <div class="hud-left">
+        <span class="hud-score">SCORE <b id="hudScore">0</b></span>
+        <span class="hud-combo" id="hudCombo"></span>
+      </div>
+      <div class="hud-right">
+        <span class="hud-lives" id="hudLives">❤❤❤</span>
+        <button class="sound-btn" id="soundBtn" title="おと">🔊</button>
+        <button class="quit-btn" id="quitBtn" title="やめる">✕</button>
+      </div>
+    </div>
+
+    <!-- 中央演出オーバーレイ（読み方リール・WARNING など） -->
+    <div class="stage-overlay" id="stageOverlay"></div>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-rank" id="resultRank">☆ PILOT</div>
+    <div class="result-score">
+      SCORE <span class="score-num" id="resultScore">0</span>
+    </div>
+    <div class="result-message" id="resultMessage"></div>
+    <div class="result-stats" id="resultStats"></div>
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
+      <button class="btn btn-secondary" id="btnBackToGrade">📚 がくねん選択</button>
+    </div>
+  </section>
+
+  <!-- 漢字データ（クイズアプリと共有） -->
+  <script src="../kanji/data.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
