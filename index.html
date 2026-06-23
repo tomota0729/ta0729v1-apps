@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>しんいちろう がんばろう！</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>しんいちろう　がんばろう！</h1>
+    <p class="subtitle">すきなアプリをえらんでね</p>
+  </header>
+
+  <main class="app-grid" id="appGrid"></main>
+
+  <footer>
+    <p>© しんいちろう がんばろう！</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script>
+    const grid = document.getElementById('appGrid');
+
+    APPS.filter(app => app.enabled).forEach(app => {
+      const card = document.createElement('a');
+      card.href = app.url;
+      card.className = 'app-card';
+      card.style.borderColor = app.color;
+      card.style.background = `linear-gradient(145deg, white, ${app.color}22)`;
+      card.innerHTML = `
+        <span class="emoji">${app.emoji}</span>
+        <span class="name">${app.name}</span>
+        <span class="desc">${app.description}</span>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

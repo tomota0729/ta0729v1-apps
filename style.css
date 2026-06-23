@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Hiragino Maru Gothic Pro', 'BIZ UDPGothic', 'Noto Sans JP', sans-serif;
+  background: linear-gradient(135deg, #FFF9C4 0%, #FFDDE1 50%, #C8F0FF 100%);
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+
+header h1 {
+  font-size: 2.4rem;
+  color: #E54B4B;
+  text-shadow: 3px 3px 0 #FFB3B3;
+  letter-spacing: 0.1em;
+}
+
+header .subtitle {
+  font-size: 1.1rem;
+  color: #888;
+  margin-top: 6px;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.app-card {
+  background: white;
+  border-radius: 24px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 3px solid transparent;
+}
+
+.app-card:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.app-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+}
+
+.app-card .emoji {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+.app-card .name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.app-card .desc {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+footer {
+  margin-top: 60px;
+  color: #bbb;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 480px) {
+  header h1 { font-size: 1.8rem; }
+  .app-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .app-card { padding: 22px 14px; }
+  .app-card .emoji { font-size: 2.8rem; }
+}

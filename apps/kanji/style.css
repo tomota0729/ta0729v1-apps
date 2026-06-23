@@ -1,0 +1,292 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary: #FF8C69;
+  --correct: #4CAF50;
+  --wrong: #F44336;
+  --bg: linear-gradient(135deg, #FFF9C4 0%, #FFDDE1 50%, #C8F0FF 100%);
+}
+
+body {
+  font-family: 'Hiragino Maru Gothic Pro', 'BIZ UDPGothic', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ---- 共通ヘッダー ---- */
+.app-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 30px;
+  gap: 12px;
+}
+
+.back-btn {
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+}
+.back-btn:active { transform: scale(0.9); }
+
+.app-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #E54B4B;
+}
+
+/* ---- 画面切り替え ---- */
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 700px;
+}
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---- 学年選択画面 ---- */
+.grade-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.grade-btn {
+  background: white;
+  border: none;
+  border-radius: 20px;
+  padding: 28px 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.12);
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.grade-btn .grade-label { font-size: 1.3rem; color: #333; }
+.grade-btn .grade-count { font-size: 0.85rem; color: #888; }
+.grade-btn:not(.disabled):active { transform: scale(0.95); }
+.grade-btn:not(.disabled):hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
+.grade-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+/* ---- クイズ画面 ---- */
+.quiz-progress {
+  width: 100%;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  height: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.quiz-progress-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 12px;
+  transition: width 0.4s;
+}
+
+.quiz-counter {
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.kanji-display {
+  background: white;
+  border-radius: 28px;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 130px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  margin-bottom: 36px;
+  transition: transform 0.2s;
+  user-select: none;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.choice-btn {
+  background: white;
+  border: 3px solid transparent;
+  border-radius: 18px;
+  padding: 18px 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  transition: transform 0.12s, border-color 0.15s, background 0.15s;
+  text-align: center;
+}
+
+.choice-btn:not(.answered):active {
+  transform: scale(0.96);
+}
+.choice-btn:not(.answered):hover {
+  border-color: var(--primary);
+}
+
+.choice-btn.correct {
+  background: #E8F5E9;
+  border-color: var(--correct);
+  color: #2E7D32;
+}
+.choice-btn.wrong {
+  background: #FFEBEE;
+  border-color: var(--wrong);
+  color: #C62828;
+}
+
+.choice-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  justify-content: center;
+  margin: 3px 0;
+}
+.choice-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+.on-label  { background: #FFE0B2; color: #E65100; }
+.kun-label { background: #E3F2FD; color: #1565C0; }
+.choice-reading {
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.feedback-overlay {
+  font-size: 5rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.15s, opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+.feedback-overlay.show {
+  transform: translate(-50%, -50%) scale(1.4);
+  opacity: 1;
+}
+
+/* ---- 結果画面 ---- */
+.result-score {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.result-score .score-num {
+  font-size: 3rem;
+  color: var(--primary);
+}
+.result-message {
+  font-size: 1.1rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.result-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.result-item {
+  background: white;
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+.result-item .ri-kanji {
+  font-size: 2.2rem;
+  text-align: center;
+}
+.result-item .ri-readings {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+}
+.result-item .ri-readings .ri-correct { color: var(--correct); font-weight: bold; }
+.result-item .ri-mark {
+  font-size: 2rem;
+}
+
+.result-btns {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 16px 28px;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  transition: transform 0.12s;
+}
+.btn:active { transform: scale(0.95); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: white; color: #555; }
+
+@media (max-width: 500px) {
+  .kanji-display { width: 170px; height: 170px; font-size: 100px; }
+  .grade-grid { grid-template-columns: repeat(2, 1fr); }
+  .choice-btn { padding: 14px 8px; font-size: 0.9rem; }
+  .result-item { grid-template-columns: 48px 1fr auto; }
+}
