@@ -134,15 +134,25 @@ function selectAnswer(selectedBtn, isCorrect, correctLabel, chosenLabel) {
     chosen: chosenLabel,
   });
 
-  state.timer = setTimeout(() => {
-    state.timer = null;
-    state.current++;
-    if (state.current < state.questions.length) {
-      renderQuestion();
-    } else {
-      showResult();
-    }
-  }, 1300);
+  if (isCorrect) {
+    state.timer = setTimeout(() => {
+      state.timer = null;
+      nextQuestion();
+    }, 1300);
+  } else {
+    document.getElementById('btnNext').style.display = 'block';
+  }
+}
+
+// ---- 次の問題へ進む ----
+function nextQuestion() {
+  document.getElementById('btnNext').style.display = 'none';
+  state.current++;
+  if (state.current < state.questions.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
 }
 
 // ---- フィードバック表示 ----
@@ -192,6 +202,7 @@ function showResult() {
 }
 
 // ---- ボタンイベント ----
+document.getElementById('btnNext').addEventListener('click', nextQuestion);
 document.getElementById('btnBackFromQuiz').addEventListener('click', () => {
   if (confirm('やめますか？')) initGradeScreen();
 });

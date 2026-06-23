@@ -131,6 +131,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 130px;
+  font-family: 'BIZ UDPMincho', 'Noto Serif JP', 'UD Digi Kyokasho N-R', 'HGP教科書体', serif;
   box-shadow: 0 8px 28px rgba(0,0,0,0.14);
   margin-bottom: 36px;
   transition: transform 0.2s;
@@ -283,6 +284,16 @@ body {
 .btn:active { transform: scale(0.95); }
 .btn-primary { background: var(--primary); color: white; }
 .btn-secondary { background: white; color: #555; }
+.btn-next {
+  background: #2196F3;
+  color: white;
+  font-size: 1.3rem;
+  padding: 18px 36px;
+  border-radius: 18px;
+  margin-top: 20px;
+  box-shadow: 0 5px 16px rgba(33,150,243,0.35);
+  width: 100%;
+}
 
 @media (max-width: 500px) {
   .kanji-display { width: 170px; height: 170px; font-size: 100px; }
