@@ -3,38 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>しんいちろう がんばろう！</title>
+  <title>漢字クイズ</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>しんいちろう　がんばろう！</h1>
-    <p class="subtitle">すきなアプリをえらんでね</p>
-  </header>
 
-  <main class="app-grid" id="appGrid"></main>
+  <!-- 共通ヘッダー -->
+  <div class="app-header">
+    <button class="back-btn" onclick="location.href='../../'">🏠</button>
+    <span class="app-title">📝 漢字クイズ</span>
+  </div>
 
-  <footer>
-    <p>© しんいちろう がんばろう！</p>
-  </footer>
+  <!-- ① 学年選択 -->
+  <section class="screen active" id="screen-grade">
+    <p style="font-size:1.2rem; color:#555; margin-bottom:20px;">がくねんをえらんでね！</p>
+    <div class="grade-grid" id="gradeGrid"></div>
+  </section>
 
-  <script src="config.js"></script>
-  <script>
-    const grid = document.getElementById('appGrid');
+  <!-- ② クイズ -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-progress">
+      <div class="quiz-progress-bar" id="progressBar"></div>
+    </div>
+    <div class="quiz-counter" id="quizCounter">1 / 10</div>
 
-    APPS.filter(app => app.enabled).forEach(app => {
-      const card = document.createElement('a');
-      card.href = app.url;
-      card.className = 'app-card';
-      card.style.borderColor = app.color;
-      card.style.background = `linear-gradient(145deg, white, ${app.color}22)`;
-      card.innerHTML = `
-        <span class="emoji">${app.emoji}</span>
-        <span class="name">${app.name}</span>
-        <span class="desc">${app.description}</span>
-      `;
-      grid.appendChild(card);
-    });
-  </script>
+    <div class="kanji-display" id="kanjiDisplay">山</div>
+
+    <div class="choices" id="choices"></div>
+
+    <button class="btn btn-next" id="btnNext" style="display:none;">
+      つぎの もんだいへ →
+    </button>
+
+    <button class="btn btn-secondary" id="btnBackFromQuiz"
+            style="margin-top:24px; font-size:0.95rem; padding:12px 20px;">
+      ⬅ やめる
+    </button>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-score">
+      <span class="score-num" id="scoreNum">0</span>
+      ／
+      <span id="scoreTotal">10</span> もん せいかい！
+    </div>
+    <div class="result-message" id="resultMessage"></div>
+
+    <div class="result-list" id="resultList"></div>
+
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
+      <button class="btn btn-secondary" id="btnBackToGrade">📚 がくねん選択</button>
+    </div>
+  </section>
+
+  <!-- フィードバックオーバーレイ -->
+  <div class="feedback-overlay" id="feedbackOverlay"></div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
