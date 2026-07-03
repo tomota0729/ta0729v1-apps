@@ -179,7 +179,8 @@ body {
   align-items: center;
   gap: 14px;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-bottom: 2vh;
 }
 .problem-text {
   font-size: 3rem;
@@ -221,6 +222,7 @@ body {
   gap: 8px;
   width: 100%;
   flex-shrink: 0;
+  margin-bottom: max(24px, 6vh);
 }
 .num-btn {
   height: 62px;

@@ -315,7 +315,7 @@ function selectGrade(grade) {
   });
 
   const opSel = $('opSelect');
-  opSel.style.display = '';
+  opSel.style.display = 'block';
   const btns = $('opButtons');
   btns.innerHTML = '';
   VEHICLES[grade].ops.forEach(op => {

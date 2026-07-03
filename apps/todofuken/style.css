@@ -119,22 +119,23 @@ body {
 .map-area {
   position: relative;
   width: 100%;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .map-wrap {
   width: 100%;
-  max-height: min(52vh, 440px);
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 #prefMap {
   width: 100%;
-  height: auto;
-  max-height: min(52vh, 440px);
+  height: 100%;
 }
 
 /* 拡大／全体トグルボタン */
@@ -184,6 +185,7 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   width: 100%;
+  flex-shrink: 0;
 }
 .choice-btn {
   background: #fff;
