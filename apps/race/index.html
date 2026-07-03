@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>計算レース</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-header" id="appHeader">
+    <button class="back-btn" onclick="location.href='../../'">🏠</button>
+    <span class="app-title">🏎 計算レース</span>
+  </div>
+
+  <!-- ① のりもの・モード選択 -->
+  <section class="screen active" id="screen-mode">
+    <p class="lead">のりものをえらんでね！</p>
+    <div class="vehicle-grid" id="vehicleGrid"></div>
+    <div class="op-select" id="opSelect">
+      <p class="op-label">けいさんのしゅるいをえらんでね</p>
+      <div class="op-buttons" id="opButtons"></div>
+    </div>
+  </section>
+
+  <!-- ② ゲーム -->
+  <section class="screen" id="screen-game">
+
+    <!-- トラック -->
+    <div class="track-area">
+      <div class="track-bg">
+        <div class="track-fill" id="trackFill">
+          <span class="track-vehicle" id="trackVehicle">🚗</span>
+        </div>
+        <span class="track-goal">🏁</span>
+      </div>
+      <div class="track-info">
+        <span class="timer-wrap" id="timerWrap">のこり <b id="timerDisp">60</b> びょう</span>
+        <span class="combo-wrap" id="comboWrap"></span>
+      </div>
+    </div>
+
+    <!-- 問題 -->
+    <div class="problem-area">
+      <div class="problem-text" id="problemText"></div>
+      <div class="answer-box" id="answerBox">
+        <span class="answer-text" id="answerText">?</span>
+      </div>
+    </div>
+
+    <!-- テンキー -->
+    <div class="numpad">
+      <button class="num-btn" data-v="7">7</button>
+      <button class="num-btn" data-v="8">8</button>
+      <button class="num-btn" data-v="9">9</button>
+      <button class="num-btn" data-v="4">4</button>
+      <button class="num-btn" data-v="5">5</button>
+      <button class="num-btn" data-v="6">6</button>
+      <button class="num-btn" data-v="1">1</button>
+      <button class="num-btn" data-v="2">2</button>
+      <button class="num-btn" data-v="3">3</button>
+      <button class="num-btn num-del" data-v="DEL">⌫</button>
+      <button class="num-btn" data-v="0">0</button>
+      <button class="num-btn num-ok" data-v="OK">OK</button>
+    </div>
+
+    <!-- カウントダウンオーバーレイ -->
+    <div class="countdown-overlay" id="countdownOverlay">
+      <div class="countdown-num" id="countdownNum">3</div>
+    </div>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-vehicle" id="resultVehicle"></div>
+    <div class="result-rank" id="resultRank"></div>
+    <div class="result-score-row">
+      SCORE <span class="result-score" id="resultScore">0</span>
+    </div>
+    <div class="result-stats" id="resultStats"></div>
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
+      <button class="btn btn-secondary" id="btnBackMode">🏠 もどる</button>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

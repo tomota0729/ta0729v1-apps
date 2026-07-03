@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>都道府県タッチ</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-header" id="appHeader">
+    <button class="back-btn" onclick="location.href='../../'">🏠</button>
+    <span class="app-title">🗾 都道府県タッチ</span>
+  </div>
+
+  <!-- ① エリア選択 -->
+  <section class="screen active" id="screen-region">
+    <p class="lead">チャレンジするエリアをえらんでね！</p>
+    <div class="region-grid" id="regionGrid"></div>
+  </section>
+
+  <!-- ② クイズ -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <span class="q-progress" id="qProgress">1 / 10</span>
+      <span class="q-score" id="qScore">✅ 0</span>
+    </div>
+
+    <div class="map-wrap" id="mapWrap"></div>
+
+    <div class="question-text" id="questionText">この県はどこ？</div>
+
+    <div class="choices" id="choices"></div>
+
+    <!-- 正解後・次へボタン -->
+    <button class="btn-next" id="btnNext" style="display:none">
+      つぎへ →
+    </button>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="result-score-text" id="resultScoreText"></div>
+    <div class="苦手-wrap" id="nigate" style="display:none">
+      <p class="nigate-label">もう一度おぼえよう！</p>
+      <div class="nigate-list" id="nigateList"></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
+      <button class="btn btn-secondary" id="btnBackRegion">🗾 エリア選択</button>
+    </div>
+    <p class="map-credit">地図：geolonia/japanese-prefectures（Wikipedia日本地図.svgベース／GFDL）</p>
+  </section>
+
+  <script src="japan-map.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

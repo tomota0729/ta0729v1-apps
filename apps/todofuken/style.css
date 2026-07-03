@@ -1,0 +1,264 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Klee One', 'Hiragino Maru Gothic Pro', sans-serif;
+  background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%);
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+
+/* ---- ヘッダー ---- */
+.app-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
+  padding: 10px 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.back-btn {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.back-btn:active { transform: scale(0.9); }
+.app-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #00695C;
+}
+
+/* ---- 画面 ---- */
+.screen { display: none; width: 100%; max-width: 640px; flex-direction: column; align-items: center; }
+.screen.active { display: flex; flex: 1; overflow: hidden; }
+
+/* ---- エリア選択 ---- */
+#screen-region {
+  padding: 4px 16px 16px;
+  overflow-y: auto;
+  flex: 1;
+  gap: 0;
+  justify-content: flex-start;
+}
+.lead {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 8px 0 14px;
+  text-align: center;
+}
+.region-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+.region-btn {
+  background: #fff;
+  border: 3px solid #ddd;
+  border-radius: 16px;
+  padding: 14px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.13s, box-shadow 0.13s;
+}
+.region-btn:active { transform: scale(0.95); }
+.region-btn .r-emoji { font-size: 1.8rem; }
+.region-btn .r-name { font-size: 1rem; font-weight: 600; }
+.region-btn .r-ruby { font-size: 0.78rem; color: #888; }
+.region-btn .r-count { font-size: 0.78rem; color: #aaa; }
+.region-btn.all-btn {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+}
+.region-btn.all-btn .r-name { font-size: 1.1rem; }
+
+/* ---- クイズ ---- */
+#screen-quiz {
+  padding: 4px 12px 8px;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 4px;
+}
+.q-progress { font-size: 0.95rem; color: #666; }
+.q-score    { font-size: 0.95rem; color: #43A047; font-weight: 600; }
+
+/* 地図 */
+.map-wrap {
+  width: 100%;
+  max-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+#prefMap {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+}
+
+/* 各都道府県。色はJSでfillを設定、枠線・アニメはCSSで */
+#prefMap .prefecture {
+  stroke: #ffffff;
+  stroke-width: 1.2;
+  cursor: default;
+  transition: fill 0.2s;
+}
+
+/* 問題文 */
+.question-text {
+  font-size: 1.05rem;
+  color: #444;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* 選択肢ボタン */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+.choice-btn {
+  background: #fff;
+  border: 3px solid #ddd;
+  border-radius: 14px;
+  padding: 10px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.1s;
+}
+.choice-btn:active { transform: scale(0.95); }
+.choice-btn .c-name { font-size: 1.1rem; font-weight: 600; color: #333; }
+.choice-btn .c-ruby { font-size: 0.82rem; color: #888; }
+.choice-btn.correct {
+  background: #E8F5E9;
+  border-color: #43A047;
+}
+.choice-btn.correct .c-name { color: #2E7D32; }
+.choice-btn.wrong {
+  background: #FFEBEE;
+  border-color: #E53935;
+}
+.choice-btn.wrong .c-name { color: #C62828; }
+.choice-btn:disabled { cursor: default; }
+
+.btn-next {
+  background: #00897B;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 32px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.btn-next:active { transform: scale(0.95); }
+
+/* ---- 結果 ---- */
+#screen-result {
+  justify-content: center;
+  gap: 14px;
+  padding: 20px 20px;
+  overflow-y: auto;
+}
+.result-emoji { font-size: 3.5rem; }
+.result-score-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+.nigate-wrap { width: 100%; }
+.nigate-label {
+  font-size: 0.95rem;
+  color: #888;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.nigate-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.nigate-chip {
+  background: #FFF3E0;
+  border: 2px solid #FFCC80;
+  border-radius: 10px;
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.nigate-chip .nc-name { font-size: 1rem; font-weight: 600; color: #E65100; }
+.nigate-chip .nc-ruby { font-size: 0.75rem; color: #BF360C; }
+
+.result-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  padding: 13px 22px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.btn:active { transform: scale(0.94); }
+.btn-primary  { background: #00897B; color: #fff; box-shadow: 0 4px 12px rgba(0,137,123,0.4); }
+.btn-secondary { background: rgba(0,0,0,0.08); color: #333; }
+
+.map-credit {
+  font-size: 0.68rem;
+  color: #90A4AE;
+  text-align: center;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+@media (max-height: 700px) {
+  .map-wrap { max-height: 240px; }
+  .choice-btn { padding: 8px 6px; }
+  .choice-btn .c-name { font-size: 1rem; }
+}

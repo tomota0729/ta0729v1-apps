@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>にほんのふしぎ</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-header" id="appHeader">
+    <button class="back-btn" onclick="location.href='../../'">🏠</button>
+    <span class="app-title">🎌 にほんのふしぎ</span>
+  </div>
+
+  <!-- ① カテゴリ選択 -->
+  <section class="screen active" id="screen-cat">
+    <p class="lead">しりたいカテゴリをえらんでね！</p>
+    <div class="cat-grid" id="catGrid"></div>
+  </section>
+
+  <!-- ② クイズ -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-top">
+      <span class="q-num" id="qNum">1 / 10</span>
+      <span class="q-score" id="qScore">✅ 0</span>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <div class="question-text" id="questionText"></div>
+    </div>
+
+    <!-- へぇカード（正解後に表示） -->
+    <div class="hee-card" id="heeCard" style="display:none">
+      <div class="hee-badge">💡 へぇ！</div>
+      <div class="hee-text" id="heeText"></div>
+      <button class="btn-next-hee" id="btnNextHee">つぎへ →</button>
+    </div>
+
+    <div class="choices" id="choices"></div>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-comment" id="resultComment"></div>
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
+      <button class="btn btn-secondary" id="btnBackCat">📚 カテゴリ選択</button>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

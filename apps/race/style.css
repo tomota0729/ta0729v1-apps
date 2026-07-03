@@ -1,0 +1,376 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --orange: #F57C00;
+  --orange-light: #FFB74D;
+  --green: #43A047;
+  --red: #E53935;
+  --blue: #1565C0;
+  --gold: #F9A825;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Klee One', 'Hiragino Maru Gothic Pro', sans-serif;
+  background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%);
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+
+/* ---- ヘッダー ---- */
+.app-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 16px;
+  gap: 12px;
+}
+.back-btn {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.back-btn:active { transform: scale(0.9); }
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--orange);
+}
+
+/* ---- 画面切り替え ---- */
+.screen { display: none; width: 100%; max-width: 600px; }
+.screen.active { display: flex; flex-direction: column; align-items: center; flex: 1; }
+
+/* ---- モード選択 ---- */
+#screen-mode { padding: 0 16px 20px; overflow-y: auto; }
+.lead {
+  font-size: 1.2rem;
+  margin: 8px 0 16px;
+  color: #555;
+}
+
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+.vehicle-card {
+  background: #fff;
+  border: 3px solid #ddd;
+  border-radius: 16px;
+  padding: 10px 6px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.vehicle-card:active { transform: scale(0.95); }
+.vehicle-card.selected {
+  border-color: var(--orange);
+  box-shadow: 0 4px 16px rgba(245,124,0,0.35);
+}
+.vehicle-canvas { border-radius: 8px; }
+.vehicle-label { font-size: 1rem; font-weight: 600; color: #333; }
+.vehicle-ops { font-size: 0.78rem; color: #888; text-align: center; line-height: 1.4; }
+
+.op-select {
+  display: none;
+  width: 100%;
+  margin-top: 18px;
+}
+.op-label { font-size: 1rem; color: #555; margin-bottom: 10px; text-align: center; }
+.op-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.op-btn {
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: 3px solid #ddd;
+  background: #fff;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.op-btn:active { transform: scale(0.93); }
+
+/* ---- ゲーム画面 ---- */
+#screen-game {
+  position: relative;
+  padding: 0;
+  gap: 0;
+  justify-content: flex-start;
+}
+
+/* トラック */
+.track-area {
+  width: 100%;
+  padding: 10px 16px 6px;
+  background: rgba(255,255,255,0.6);
+  border-bottom: 2px solid rgba(0,0,0,0.08);
+}
+.track-bg {
+  position: relative;
+  height: 52px;
+  background: #CFD8DC;
+  border-radius: 26px;
+  margin: 0 20px 0 0;
+  overflow: visible;
+}
+.track-fill {
+  position: relative;
+  height: 100%;
+  min-width: 5%;
+  background: linear-gradient(90deg, var(--green), #8BC34A);
+  border-radius: 26px;
+  transition: width 0.35s cubic-bezier(.34,1.4,.64,1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.track-fill.retreat {
+  background: linear-gradient(90deg, #e53935, #EF9A9A);
+  transition: width 0.25s ease-out;
+}
+.track-vehicle {
+  position: absolute;
+  right: -18px;
+  font-size: 2.2rem;
+  filter: drop-shadow(1px 2px 4px rgba(0,0,0,0.2));
+  pointer-events: none;
+  line-height: 1;
+}
+.track-goal {
+  position: absolute;
+  right: -28px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+}
+.track-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding: 0 4px;
+}
+.timer-wrap {
+  font-size: 1rem;
+  color: #555;
+}
+.timer-wrap b {
+  font-size: 1.4rem;
+  color: var(--orange);
+}
+.timer-wrap.warn b {
+  color: var(--red);
+  animation: timerBlink 0.5s infinite alternate;
+}
+@keyframes timerBlink {
+  from { opacity: 1; }
+  to { opacity: 0.3; }
+}
+.combo-wrap {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--orange);
+  min-height: 1.4em;
+  transition: opacity 0.2s;
+}
+.combo-wrap.show {
+  animation: comboPop 0.3s ease;
+}
+@keyframes comboPop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 問題エリア */
+.problem-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 16px 8px;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+}
+.problem-text {
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: #222;
+  letter-spacing: 2px;
+}
+.answer-box {
+  background: #fff;
+  border: 3px solid #ddd;
+  border-radius: 16px;
+  min-width: 140px;
+  padding: 10px 24px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.answer-box.correct { border-color: var(--green); }
+.answer-box.wrong   { border-color: var(--red); animation: shake 0.35s; }
+.answer-text {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+}
+.answer-text.correct { color: var(--green); }
+.answer-text.wrong   { color: var(--red); }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+/* テンキー */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding: 8px 16px 16px;
+}
+.num-btn {
+  height: 64px;
+  border: 2px solid #ddd;
+  border-radius: 14px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 0 #ccc;
+}
+.num-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #ccc;
+}
+.num-del {
+  background: #FFF3E0;
+  border-color: #FFCC80;
+  color: var(--orange);
+}
+.num-ok {
+  background: var(--orange);
+  border-color: #E65100;
+  color: #fff;
+  box-shadow: 0 3px 0 #BF360C;
+  font-size: 1.3rem;
+}
+.num-ok:active { box-shadow: 0 1px 0 #BF360C; }
+
+/* カウントダウン */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+.countdown-num {
+  font-size: 7rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(255,200,0,0.8);
+  animation: cdPop 0.6s ease;
+}
+@keyframes cdPop {
+  0%   { transform: scale(1.8); opacity: 0; }
+  40%  { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.countdown-overlay.hidden { display: none; }
+
+/* ---- 結果 ---- */
+#screen-result {
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+}
+.result-vehicle { font-size: 4rem; }
+.result-rank {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--orange);
+  text-align: center;
+  animation: cdPop 0.5s ease;
+}
+.result-score-row { font-size: 1.1rem; color: #555; }
+.result-score {
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--blue);
+  margin-left: 8px;
+}
+.result-stats {
+  background: rgba(255,255,255,0.8);
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  line-height: 2;
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+}
+.result-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.btn:active { transform: scale(0.94); }
+.btn-primary  { background: var(--orange); color: #fff; box-shadow: 0 4px 12px rgba(245,124,0,0.4); }
+.btn-secondary { background: rgba(0,0,0,0.08); color: #333; }
+
+@media (max-width: 400px) {
+  .vehicle-grid { grid-template-columns: repeat(3, 1fr); }
+  .num-btn { height: 56px; font-size: 1.4rem; }
+  .problem-text { font-size: 2rem; }
+}
