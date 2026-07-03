@@ -1,5 +1,21 @@
 // 計算レース - game.js
 
+// ---- roundRect ポリフィル（iPad Safari 16.4未満対策） ----
+if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+    else if (Array.isArray(r)) r = { tl: r[0]||0, tr: r[1]||r[0]||0, br: r[2]||r[0]||0, bl: r[3]||r[1]||r[0]||0 };
+    else r = { tl: 0, tr: 0, br: 0, bl: 0 };
+    this.moveTo(x + r.tl, y);
+    this.arcTo(x + w, y,     x + w, y + h, r.tr);
+    this.arcTo(x + w, y + h, x,     y + h, r.br);
+    this.arcTo(x,     y + h, x,     y,     r.bl);
+    this.arcTo(x,     y,     x + w, y,     r.tl);
+    this.closePath();
+    return this;
+  };
+}
+
 // ---- サウンド ----
 const Sound = {
   ctx: null,
@@ -102,10 +118,19 @@ const VEHICLES = {
        ]}
 };
 
-const VEHICLE_NAMES = { 1: 'ファミリーカー', 2: 'レーシングカー', 3: 'ロケット' };
+const VEHICLE_NAMES = { 1: 'じどうしゃ', 2: 'レーシングカー', 3: 'ロケット' };
 
 // ---- のりものをCanvasに描く ----
 function drawVehicleOnCanvas(cv, grade) {
+  try {
+    drawVehicleInner(cv, grade);
+  } catch (e) {
+    // 描画に失敗しても他の処理を止めない（保険）
+    console.warn('vehicle draw failed:', e);
+  }
+}
+
+function drawVehicleInner(cv, grade) {
   const ctx = cv.getContext('2d');
   ctx.clearRect(0, 0, cv.width, cv.height);
   const cx = cv.width / 2, cy = cv.height / 2;

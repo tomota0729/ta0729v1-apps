@@ -91,7 +91,8 @@ body {
   border-color: var(--orange);
   box-shadow: 0 4px 16px rgba(245,124,0,0.35);
 }
-.vehicle-canvas { border-radius: 8px; }
+.vehicle-card { min-width: 0; }
+.vehicle-canvas { border-radius: 8px; width: 100%; height: auto; display: block; }
 .vehicle-label { font-size: 1rem; font-weight: 600; color: #333; }
 .vehicle-ops { font-size: 0.78rem; color: #888; text-align: center; line-height: 1.4; }
 

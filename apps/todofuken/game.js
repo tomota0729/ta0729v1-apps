@@ -114,6 +114,63 @@ function resetAllPrefColors() {
   PREFS.forEach(p => setPrefColor(p.id, GROUP_COLORS[p.group]));
 }
 
+// ---- 地図ズーム（該当地方だけ大きく表示） ----
+const FULL_VIEWBOX = '0 0 1000 1000';
+
+// 要素の外接矩形をルートSVGの座標系へ変換して返す
+function svgSpaceRect(el, svg) {
+  const b = el.getBBox();
+  const ctm = svg.getScreenCTM().inverse().multiply(el.getScreenCTM());
+  const corners = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]];
+  const pts = corners.map(([x, y]) => {
+    const p = svg.createSVGPoint(); p.x = x; p.y = y;
+    return p.matrixTransform(ctm);
+  });
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) };
+}
+
+// 指定県の集合にviewBoxをフィットさせる
+function fitViewBoxTo(prefIds) {
+  const svg = $('prefMap');
+  if (!svg || !svg.getScreenCTM) return;
+  try {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    prefIds.forEach(id => {
+      const el = svg.querySelector(`[data-code="${id}"]`);
+      if (!el) return;
+      const r = svgSpaceRect(el, svg);
+      minX = Math.min(minX, r.minX); minY = Math.min(minY, r.minY);
+      maxX = Math.max(maxX, r.maxX); maxY = Math.max(maxY, r.maxY);
+    });
+    if (!isFinite(minX)) return;
+    const w = maxX - minX, h = maxY - minY;
+    const padX = w * 0.08 + 10, padY = h * 0.08 + 10;
+    svg.setAttribute('viewBox', `${minX - padX} ${minY - padY} ${w + padX * 2} ${h + padY * 2}`);
+  } catch (e) { /* getScreenCTMが取れない場合は何もしない */ }
+}
+
+function setFit(prefIds) {
+  G.fitPrefIds = prefIds;
+  applyZoom();
+}
+
+function applyZoom() {
+  const svg = $('prefMap');
+  if (!svg) return;
+  if (G.zoomedOut || !G.fitPrefIds || !G.fitPrefIds.length) {
+    svg.setAttribute('viewBox', FULL_VIEWBOX);
+  } else {
+    fitViewBoxTo(G.fitPrefIds);
+  }
+  updateZoomBtn();
+}
+
+function updateZoomBtn() {
+  const btn = $('zoomToggle');
+  if (btn) btn.textContent = G.zoomedOut ? '🔍 ちほうをアップ' : '🗾 ぜんたいを見る';
+}
+
 // ---- 画面切り替え ----
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -157,6 +214,10 @@ function startQuiz(regionIdx) {
   G.correct = 0;
   G.wrong = [];
   G.wrongIds = new Set();
+  G.zoomedOut = false;
+  G.isNationwide = (regionIdx === QUIZ_REGIONS.length - 1);
+  // 地方モードは選んだ地方全体にフィット。全国は問題ごとにフィットする。
+  G.fitPrefIds = G.isNationwide ? null : G.pool.map(p => p.id);
 
   showScreen('quiz');
   resetAllPrefColors();
@@ -174,6 +235,22 @@ function showQuestion() {
   // 全県をリセット、対象県をハイライト
   resetAllPrefColors();
   setPrefColor(q.id, '#FF6F00');
+
+  // 対象県を点滅で強調
+  const svg = $('prefMap');
+  if (svg) {
+    svg.querySelectorAll('.target-pulse').forEach(e => e.classList.remove('target-pulse'));
+    const tgt = svg.querySelector(`[data-code="${q.id}"]`);
+    if (tgt) tgt.classList.add('target-pulse');
+  }
+
+  // 地図ズーム：問題が変わったら該当地方にフィット（拡大状態を解除）
+  G.zoomedOut = false;
+  if (G.isNationwide) {
+    setFit(PREFS.filter(p => p.group === q.group).map(p => p.id));
+  } else {
+    applyZoom();
+  }
 
   // 選択肢生成
   const choices = makeChoices(q);
@@ -215,6 +292,10 @@ function renderChoices(choices, correctId) {
 function handleChoice(selectedId, correctId, choices) {
   // ボタンを無効化
   $('choices').querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  // 点滅を止める（正誤の色を見やすく）
+  const svg = $('prefMap');
+  if (svg) svg.querySelectorAll('.target-pulse').forEach(e => e.classList.remove('target-pulse'));
 
   const isCorrect = selectedId === correctId;
 
@@ -292,4 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
   $('btnNext').addEventListener('click', nextOrResult);
   $('btnRetry').addEventListener('click', () => startQuiz(G.regionIdx));
   $('btnBackRegion').addEventListener('click', initRegionSelect);
+  $('zoomToggle').addEventListener('click', () => {
+    G.zoomedOut = !G.zoomedOut;
+    applyZoom();
+  });
 });

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>スピードけいさん</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-header" id="appHeader">
+    <button class="back-btn" onclick="location.href='../../'">🏠</button>
+    <span class="app-title">⏱ スピードけいさん</span>
+  </div>
+
+  <!-- ① モード選択 -->
+  <section class="screen active" id="screen-mode">
+    <p class="lead">モードをえらんでね！</p>
+    <div class="mode-grid" id="modeGrid"></div>
+
+    <div class="record-panel">
+      <div class="record-title">🏆 ベストタイム</div>
+      <div class="record-list" id="recordList"></div>
+      <button class="btn-clear" id="btnClear">🗑 きろくをけす</button>
+    </div>
+  </section>
+
+  <!-- ② クイズ -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-top">
+      <span class="q-num" id="qNum">1 / 10</span>
+      <span class="q-timer" id="qTimer">⏱ 0.0</span>
+    </div>
+    <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="problem-area">
+      <div class="problem-text" id="problemText"></div>
+      <div class="answer-box" id="answerBox">
+        <span class="answer-text" id="answerText">?</span>
+      </div>
+    </div>
+
+    <div class="numpad" id="numpad">
+      <button class="num-btn" data-v="7">7</button>
+      <button class="num-btn" data-v="8">8</button>
+      <button class="num-btn" data-v="9">9</button>
+      <button class="num-btn" data-v="4">4</button>
+      <button class="num-btn" data-v="5">5</button>
+      <button class="num-btn" data-v="6">6</button>
+      <button class="num-btn" data-v="1">1</button>
+      <button class="num-btn" data-v="2">2</button>
+      <button class="num-btn" data-v="3">3</button>
+      <button class="num-btn num-del" data-v="DEL">⌫</button>
+      <button class="num-btn" data-v="0">0</button>
+      <button class="num-btn num-spacer" disabled></button>
+    </div>
+
+    <div class="countdown-overlay" id="countdownOverlay">
+      <div class="countdown-num" id="countdownNum">3</div>
+    </div>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-medal" id="resultMedal">⏱</div>
+    <div class="newrecord" id="newRecord" style="display:none">🎉 しんきろく！</div>
+    <div class="result-time" id="resultTime"></div>
+    <div class="result-stats" id="resultStats"></div>
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
+      <button class="btn btn-secondary" id="btnBackMode">⏱ モードをかえる</button>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>

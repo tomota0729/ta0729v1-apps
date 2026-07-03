@@ -43,6 +43,15 @@ const APPS = [
     enabled: true,
     color: '#C62828',
     description: 'しらなかったことをおぼえよう'
+  },
+  {
+    id: 'keisan',
+    name: 'スピードけいさん',
+    emoji: '⏱',
+    url: 'apps/keisan/',
+    enabled: true,
+    color: '#7B1FA2',
+    description: '10もんをはやくとこう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります

@@ -116,19 +116,45 @@ body {
 .q-score    { font-size: 0.95rem; color: #43A047; font-weight: 600; }
 
 /* 地図 */
-.map-wrap {
+.map-area {
+  position: relative;
   width: 100%;
-  max-height: 300px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+}
+.map-wrap {
+  width: 100%;
+  max-height: min(52vh, 440px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #prefMap {
   width: 100%;
   height: auto;
-  max-height: 300px;
+  max-height: min(52vh, 440px);
 }
+
+/* 拡大／全体トグルボタン */
+.zoom-toggle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255,255,255,0.92);
+  border: 2px solid #B2DFDB;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #00695C;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 5;
+}
+.zoom-toggle:active { transform: scale(0.94); }
 
 /* 各都道府県。色はJSでfillを設定、枠線・アニメはCSSで */
 #prefMap .prefecture {
@@ -136,6 +162,12 @@ body {
   stroke-width: 1.2;
   cursor: default;
   transition: fill 0.2s;
+}
+/* 出題中の県を点滅で強調 */
+#prefMap .target-pulse { animation: targetPulse 1s ease-in-out infinite; }
+@keyframes targetPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
 }
 
 /* 問題文 */
