@@ -34,26 +34,28 @@
     </div>
     <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
 
-    <div class="problem-area">
-      <div class="problem-text" id="problemText"></div>
-      <div class="answer-box" id="answerBox">
-        <span class="answer-text" id="answerText">?</span>
+    <div class="play-area">
+      <div class="problem-area">
+        <div class="problem-text" id="problemText"></div>
+        <div class="answer-box" id="answerBox">
+          <span class="answer-text" id="answerText">?</span>
+        </div>
       </div>
-    </div>
 
-    <div class="numpad" id="numpad">
-      <button class="num-btn" data-v="7">7</button>
-      <button class="num-btn" data-v="8">8</button>
-      <button class="num-btn" data-v="9">9</button>
-      <button class="num-btn" data-v="4">4</button>
-      <button class="num-btn" data-v="5">5</button>
-      <button class="num-btn" data-v="6">6</button>
-      <button class="num-btn" data-v="1">1</button>
-      <button class="num-btn" data-v="2">2</button>
-      <button class="num-btn" data-v="3">3</button>
-      <button class="num-btn num-del" data-v="DEL">⌫</button>
-      <button class="num-btn" data-v="0">0</button>
-      <button class="num-btn num-spacer" disabled></button>
+      <div class="numpad" id="numpad">
+        <button class="num-btn" data-v="7">7</button>
+        <button class="num-btn" data-v="8">8</button>
+        <button class="num-btn" data-v="9">9</button>
+        <button class="num-btn" data-v="4">4</button>
+        <button class="num-btn" data-v="5">5</button>
+        <button class="num-btn" data-v="6">6</button>
+        <button class="num-btn" data-v="1">1</button>
+        <button class="num-btn" data-v="2">2</button>
+        <button class="num-btn" data-v="3">3</button>
+        <button class="num-btn num-del" data-v="DEL">⌫</button>
+        <button class="num-btn" data-v="0">0</button>
+        <button class="num-btn num-spacer" disabled></button>
+      </div>
     </div>
 
     <div class="countdown-overlay" id="countdownOverlay">
@@ -67,10 +69,12 @@
     <div class="newrecord" id="newRecord" style="display:none">🎉 しんきろく！</div>
     <div class="result-time" id="resultTime"></div>
     <div class="result-stats" id="resultStats"></div>
+    <div class="ranking" id="ranking"></div>
     <div class="result-btns">
       <button class="btn btn-primary" id="btnRetry">🔄 もう一度！</button>
       <button class="btn btn-secondary" id="btnBackMode">⏱ モードをかえる</button>
     </div>
+    <button class="btn-clear" id="btnResetRanking">🗑 ランキングをリセット</button>
   </section>
 
   <script src="game.js"></script>

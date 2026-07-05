@@ -243,8 +243,8 @@ function finishGame(success) {
   const time = (performance.now() - G.startTime) / 1000;
   if (success) {
     Sound.finish();
-    const isNew = saveResult(G.mode, time);
-    showSuccess(time, isNew);
+    const { isNew, entry } = saveResult(G.mode, time);
+    showSuccess(time, isNew, entry);
   } else {
     showFailure(G.qIdx + 1, time);
   }
@@ -257,10 +257,44 @@ function saveResult(mode, time) {
     rec.best[mode] = time;
     isNew = true;
   }
-  rec.history.unshift({ mode, time, date: Date.now() });
-  rec.history = rec.history.slice(0, 10);
+  const entry = { mode, time, date: Date.now() };
+  rec.history.push(entry);
+  // タイムの速い順で上位30件を保持（ランキングが安定する）
+  rec.history.sort((a, b) => a.time - b.time);
+  rec.history = rec.history.slice(0, 30);
   saveRecords(rec);
-  return isNew;
+  return { isNew, entry };
+}
+
+// 日時を M/D HH:MM に整形
+function formatDate(ms) {
+  const d = new Date(ms);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// 結果画面のランキング（全モードまとめて上位5・日時付き）
+function renderRanking(currentEntry) {
+  const rec = loadRecords();
+  const box = $('ranking');
+  const top = [...rec.history].sort((a, b) => a.time - b.time).slice(0, 5);
+  const medals = ['🥇', '🥈', '🥉', '4', '5'];
+  let rows;
+  if (top.length === 0) {
+    rows = '<div class="rank-empty">まだ記録がないよ。ノーミスでクリアしよう！</div>';
+  } else {
+    rows = top.map((h, i) => {
+      const isMe = currentEntry && h.time === currentEntry.time && h.date === currentEntry.date && h.mode === currentEntry.mode;
+      return `
+        <div class="rank-row${isMe ? ' me' : ''}">
+          <span class="rank-no">${medals[i]}</span>
+          <span class="rank-mode">${MODES[h.mode].emoji}</span>
+          <span class="rank-time">${h.time.toFixed(1)}びょう</span>
+          <span class="rank-date">${formatDate(h.date)}</span>
+        </div>`;
+    }).join('');
+  }
+  box.innerHTML = `<div class="ranking-title">🏆 ランキング トップ5</div>${rows}`;
 }
 
 // ---- 結果 ----
@@ -271,7 +305,7 @@ function medalFor(time) {
 }
 
 // 成功（10問クリア）
-function showSuccess(time, isNew) {
+function showSuccess(time, isNew, entry) {
   showScreen('result');
   const medal = medalFor(time);
   $('resultMedal').textContent = medal.emoji;
@@ -284,6 +318,7 @@ function showSuccess(time, isNew) {
     <div>🎯 ノーミスでクリア！</div>
     <div>1もんへいきん <b>${avg}</b> びょう</div>
   `;
+  renderRanking(entry);
 }
 
 // 失敗（1問でもまちがえたら終了）
@@ -298,6 +333,7 @@ function showFailure(failedQ, time) {
     <div>ここまで ${time.toFixed(1)} びょう</div>
     <div style="margin-top:6px; color:#888; font-size:0.9rem">ノーミスで10もんクリアをめざそう！</div>
   `;
+  renderRanking(null);
 }
 
 // ---- 記録クリア ----
@@ -305,6 +341,7 @@ function clearRecords() {
   if (confirm('きろくをぜんぶけしますか？')) {
     try { localStorage.removeItem(STORE_KEY); } catch (e) {}
     renderRecords();
+    if ($('ranking')) renderRanking(null);
   }
 }
 
@@ -320,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('btnClear').addEventListener('click', clearRecords);
+  $('btnResetRanking').addEventListener('click', clearRecords);
   $('btnRetry').addEventListener('click', () => startCountdown(G.mode));
   $('btnBackMode').addEventListener('click', initModeSelect);
 });

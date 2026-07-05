@@ -172,15 +172,25 @@ body {
   transition: width 0.3s ease;
 }
 
+/* 問題＋テンキーを縦中央にまとめる */
+.play-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 3vh;
+  min-height: 0;
+}
+
 /* 問題 */
 .problem-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  flex: 1;
-  justify-content: flex-end;
-  padding-bottom: 2vh;
+  flex: 0 0 auto;
 }
 .problem-text {
   font-size: 3rem;
@@ -222,7 +232,6 @@ body {
   gap: 8px;
   width: 100%;
   flex-shrink: 0;
-  margin-bottom: max(24px, 6vh);
 }
 .num-btn {
   height: 62px;
@@ -283,11 +292,11 @@ body {
 
 /* ---- 結果 ---- */
 #screen-result {
-  justify-content: center;
-  gap: 12px;
-  padding: 24px 20px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 14px 20px;
 }
-.result-medal { font-size: 4.5rem; }
+.result-medal { font-size: 3.4rem; }
 .newrecord {
   font-size: 1.6rem;
   font-weight: 600;
@@ -310,6 +319,38 @@ body {
   width: 100%;
   max-width: 320px;
 }
+/* ランキング */
+.ranking {
+  width: 100%;
+  max-width: 340px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+.ranking-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--purple);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+.rank-row + .rank-row { margin-top: 3px; }
+.rank-row.me { background: #F3E5F5; box-shadow: 0 0 0 2px var(--purple-light) inset; }
+.rank-no { width: 1.9em; text-align: center; font-weight: 600; flex-shrink: 0; }
+.rank-mode { flex-shrink: 0; }
+.rank-time { font-weight: 600; color: var(--purple); margin-left: auto; }
+.rank-date { color: #999; font-size: 0.8rem; flex-shrink: 0; }
+.rank-empty { text-align: center; color: #999; font-size: 0.92rem; padding: 6px; }
+
 .result-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
 .btn {
   padding: 14px 24px;
