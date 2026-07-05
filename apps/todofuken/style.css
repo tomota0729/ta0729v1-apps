@@ -19,6 +19,7 @@ body {
   flex-direction: column;
   align-items: center;
   height: 100vh;
+  height: 100dvh;
 }
 
 /* ---- ヘッダー ---- */
@@ -50,15 +51,15 @@ body {
 
 /* ---- 画面 ---- */
 .screen { display: none; width: 100%; max-width: 640px; flex-direction: column; align-items: center; }
-.screen.active { display: flex; flex: 1; overflow: hidden; }
+.screen.active { display: flex; flex: 1; min-height: 0; overflow-y: auto; }
 
 /* ---- エリア選択 ---- */
 #screen-region {
-  padding: 4px 16px 16px;
+  padding: 16px;
   overflow-y: auto;
   flex: 1;
   gap: 0;
-  justify-content: flex-start;
+  justify-content: center;
 }
 .lead {
   font-size: 1.1rem;
@@ -100,7 +101,7 @@ body {
 
 /* ---- クイズ ---- */
 #screen-quiz {
-  padding: 4px 12px 8px;
+  padding: 6px 12px 16px;
   gap: 6px;
   justify-content: flex-start;
 }

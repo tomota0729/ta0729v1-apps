@@ -27,6 +27,7 @@ body {
   flex-direction: column;
   align-items: center;
   height: 100vh;
+  height: 100dvh;
 }
 
 /* ---- ヘッダー ---- */
@@ -61,7 +62,7 @@ body {
 .screen.active { display: flex; flex-direction: column; align-items: center; flex: 1; overflow-y: auto; }
 
 /* ---- モード選択 ---- */
-#screen-mode { padding: 0 16px 20px; }
+#screen-mode { padding: 16px; justify-content: center; }
 .lead {
   font-size: 1.2rem;
   margin: 8px 0 16px;
@@ -345,7 +346,19 @@ body {
 }
 .rank-row + .rank-row { margin-top: 3px; }
 .rank-row.me { background: #F3E5F5; box-shadow: 0 0 0 2px var(--purple-light) inset; }
-.rank-no { width: 1.9em; text-align: center; font-weight: 600; flex-shrink: 0; }
+.rank-no {
+  flex-shrink: 0;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .rank-mode { flex-shrink: 0; }
 .rank-time { font-weight: 600; color: var(--purple); margin-left: auto; }
 .rank-date { color: #999; font-size: 0.8rem; flex-shrink: 0; }

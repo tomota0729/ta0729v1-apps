@@ -27,6 +27,7 @@ body {
   flex-direction: column;
   align-items: center;
   height: 100vh;
+  height: 100dvh;
   position: relative;
 }
 
@@ -70,7 +71,7 @@ body.playing #appHeader { display: none; }
 .screen.active { display: flex; flex-direction: column; align-items: center; flex: 1; }
 
 /* ---- 学年選択 ---- */
-#screen-grade { padding: 10px 20px 30px; max-width: 700px; }
+#screen-grade { padding: 20px; max-width: 700px; justify-content: center; overflow-y: auto; }
 .lead { font-size: 1.3rem; margin: 18px 0 24px; text-shadow: 0 0 10px var(--neon2); }
 .hint { margin-top: 26px; color: #9fa8da; font-size: 0.92rem; }
 

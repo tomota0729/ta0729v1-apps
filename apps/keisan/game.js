@@ -243,8 +243,8 @@ function finishGame(success) {
   const time = (performance.now() - G.startTime) / 1000;
   if (success) {
     Sound.finish();
-    const { isNew, entry } = saveResult(G.mode, time);
-    showSuccess(time, isNew, entry);
+    const { entry, rank } = saveResult(G.mode, time);
+    showSuccess(time, entry, rank);
   } else {
     showFailure(G.qIdx + 1, time);
   }
@@ -252,10 +252,8 @@ function finishGame(success) {
 
 function saveResult(mode, time) {
   const rec = loadRecords();
-  let isNew = false;
   if (rec.best[mode] == null || time < rec.best[mode]) {
     rec.best[mode] = time;
-    isNew = true;
   }
   const entry = { mode, time, date: Date.now() };
   rec.history.push(entry);
@@ -263,7 +261,9 @@ function saveResult(mode, time) {
   rec.history.sort((a, b) => a.time - b.time);
   rec.history = rec.history.slice(0, 30);
   saveRecords(rec);
-  return { isNew, entry };
+  // 今回の記録の順位（全体ランキング内、1始まり。30件から漏れたら0）
+  const rank = rec.history.findIndex(h => h.date === entry.date && h.time === entry.time && h.mode === entry.mode) + 1;
+  return { entry, rank };
 }
 
 // 日時を M/D HH:MM に整形
@@ -278,7 +278,6 @@ function renderRanking(currentEntry) {
   const rec = loadRecords();
   const box = $('ranking');
   const top = [...rec.history].sort((a, b) => a.time - b.time).slice(0, 5);
-  const medals = ['🥇', '🥈', '🥉', '4', '5'];
   let rows;
   if (top.length === 0) {
     rows = '<div class="rank-empty">まだ記録がないよ。ノーミスでクリアしよう！</div>';
@@ -287,7 +286,7 @@ function renderRanking(currentEntry) {
       const isMe = currentEntry && h.time === currentEntry.time && h.date === currentEntry.date && h.mode === currentEntry.mode;
       return `
         <div class="rank-row${isMe ? ' me' : ''}">
-          <span class="rank-no">${medals[i]}</span>
+          <span class="rank-no">${i + 1}</span>
           <span class="rank-mode">${MODES[h.mode].emoji}</span>
           <span class="rank-time">${h.time.toFixed(1)}びょう</span>
           <span class="rank-date">${formatDate(h.date)}</span>
@@ -298,25 +297,26 @@ function renderRanking(currentEntry) {
 }
 
 // ---- 結果 ----
-function medalFor(time) {
-  if (time < 20) return { emoji: '🥇', label: 'ゴールド' };
-  if (time < 35) return { emoji: '🥈', label: 'シルバー' };
-  return { emoji: '🥉', label: 'ブロンズ' };
-}
-
-// 成功（10問クリア）
-function showSuccess(time, isNew, entry) {
+// 成功（10問クリア）。メダルは今回の順位が1〜3位のときだけ表示。
+function showSuccess(time, entry, rank) {
   showScreen('result');
-  const medal = medalFor(time);
-  $('resultMedal').textContent = medal.emoji;
-  $('newRecord').style.display = isNew ? '' : 'none';
+  const isMedal = rank >= 1 && rank <= 3;
+  const medalEmoji = ['🥇', '🥈', '🥉'][rank - 1];
+  $('resultMedal').textContent = isMedal ? medalEmoji : '🏁';
+  if (isMedal) {
+    $('newRecord').textContent = `🎉 ${rank}いにランクイン！`;
+    $('newRecord').style.display = '';
+  } else {
+    $('newRecord').style.display = 'none';
+  }
   $('resultTime').textContent = `${time.toFixed(1)} びょう！`;
   const avg = (time / TOTAL_Q).toFixed(1);
+  const rankText = rank >= 1 ? `<div>ランキング <b>${rank}</b> い</div>` : '';
   $('resultStats').innerHTML = `
     <div>${MODES[G.mode].emoji} ${MODES[G.mode].name}モード</div>
-    <div>メダル：${medal.emoji} ${medal.label}</div>
     <div>🎯 ノーミスでクリア！</div>
     <div>1もんへいきん <b>${avg}</b> びょう</div>
+    ${rankText}
   `;
   renderRanking(entry);
 }
