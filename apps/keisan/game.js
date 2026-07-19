@@ -34,6 +34,14 @@ const MODES = {
 };
 const MODE_ORDER = ['add', 'sub', 'mix'];
 
+// ---- レベル設定 ----
+const LEVELS = {
+  1: { label: 'レベル1', desc: { add: '1けた ＋ 1けた', sub: '1けた － 1けた', mix: 'たしざん・ひきざん' } },
+  2: { label: 'レベル2', desc: { add: '10〜20 ＋ 1けた', sub: '10〜20 － 1けた', mix: '10〜20 の ミックス' } }
+};
+const LEVEL_ORDER = [1, 2];
+let currentLevel = 1;
+
 const TOTAL_Q = 10;
 const STORE_KEY = 'keisan-records';
 
@@ -50,12 +58,23 @@ function showScreen(name) {
 }
 
 // ---- 記録（localStorage） ----
+const recKey = (level, mode) => `${level}:${mode}`;
+
 function loadRecords() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) {}
-  return { best: { add: null, sub: null, mix: null }, history: [] };
+  let rec = null;
+  try { const raw = localStorage.getItem(STORE_KEY); rec = raw ? JSON.parse(raw) : null; } catch (e) {}
+  if (!rec || typeof rec !== 'object') rec = {};
+  if (!rec.best || typeof rec.best !== 'object') rec.best = {};
+  if (!Array.isArray(rec.history)) rec.history = [];
+  // 旧データ移行：レベルなし → レベル1
+  const best = {};
+  for (const k in rec.best) {
+    if (rec.best[k] == null) continue;
+    best[k.indexOf(':') >= 0 ? k : ('1:' + k)] = rec.best[k];
+  }
+  rec.best = best;
+  rec.history = rec.history.map(h => (h.level ? h : Object.assign({ level: 1 }, h)));
+  return rec;
 }
 function saveRecords(rec) {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(rec)); } catch (e) {}
@@ -65,11 +84,11 @@ function renderRecords() {
   const rec = loadRecords();
   const list = $('recordList');
   const rows = MODE_ORDER
-    .filter(m => rec.best[m] != null)
+    .filter(m => rec.best[recKey(currentLevel, m)] != null)
     .map(m => `
       <div class="record-row">
         <span class="rr-mode">${MODES[m].emoji} ${MODES[m].name}</span>
-        <span class="rr-time">${rec.best[m].toFixed(1)} びょう</span>
+        <span class="rr-time">${rec.best[recKey(currentLevel, m)].toFixed(1)} びょう</span>
       </div>`);
   list.innerHTML = rows.length
     ? rows.join('')
@@ -77,7 +96,24 @@ function renderRecords() {
 }
 
 // ---- モード選択 ----
-function initModeSelect() {
+function buildLevelRow() {
+  const row = $('levelRow');
+  row.innerHTML = '';
+  LEVEL_ORDER.forEach(lv => {
+    const btn = document.createElement('button');
+    btn.className = 'level-btn' + (lv === currentLevel ? ' on' : '');
+    btn.textContent = LEVELS[lv].label;
+    btn.addEventListener('click', () => {
+      currentLevel = lv;
+      buildLevelRow();
+      buildModeGrid();
+      renderRecords();
+    });
+    row.appendChild(btn);
+  });
+}
+
+function buildModeGrid() {
   const grid = $('modeGrid');
   grid.innerHTML = '';
   MODE_ORDER.forEach(m => {
@@ -88,11 +124,16 @@ function initModeSelect() {
       <span class="mode-emoji">${mode.emoji}</span>
       <span class="mode-texts">
         <span class="mode-name">${mode.name}</span>
-        <span class="mode-ruby">${mode.ruby}</span>
+        <span class="mode-desc">${LEVELS[currentLevel].desc[m]}</span>
       </span>`;
-    btn.addEventListener('click', () => startCountdown(m));
+    btn.addEventListener('click', () => startCountdown(m, currentLevel));
     grid.appendChild(btn);
   });
+}
+
+function initModeSelect() {
+  buildLevelRow();
+  buildModeGrid();
   renderRecords();
   showScreen('mode');
 }
@@ -100,23 +141,28 @@ function initModeSelect() {
 // ---- 問題生成 ----
 function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-function genProblem(mode) {
+function genProblem(mode, level) {
   let op = mode;
   if (mode === 'mix') op = Math.random() < 0.5 ? 'add' : 'sub';
 
   let a, b, ans, sym;
   if (op === 'add') {
-    a = rand(0, 9); b = rand(0, 9);
+    a = rand(level === 2 ? 10 : 0, level === 2 ? 20 : 9); b = rand(0, 9);
     ans = a + b; sym = '＋';
   } else {
-    a = rand(0, 9); b = rand(0, a);   // 答えがマイナスにならない
+    if (level === 2) {
+      a = rand(10, 20); b = rand(0, 9);           // a≥10>b なので必ず0以上
+    } else {
+      a = rand(0, 9); b = rand(0, 9);
+      if (b > a) { const t = a; a = b; b = t; }   // 大きい数－小さい数（マイナスにしない）
+    }
     ans = a - b; sym = '－';
   }
   return { a, b, sym, ans };
 }
 
 // ---- カウントダウン ----
-function startCountdown(mode) {
+function startCountdown(mode, level) {
   Sound.resume();
   showScreen('quiz');
   const overlay = $('countdownOverlay');
@@ -142,7 +188,7 @@ function startCountdown(mode) {
       setTimeout(() => {
         overlay.classList.add('hidden');
         num.style.fontSize = '';
-        startGame(mode);
+        startGame(mode, level);
       }, 650);
     } else {
       num.textContent = count;
@@ -154,15 +200,15 @@ function startCountdown(mode) {
 }
 
 // ---- ゲーム開始 ----
-function startGame(mode) {
+function startGame(mode, level) {
   cancelAnimationFrame(timerRAF);
-  G = { mode, qIdx: 0, input: '', locked: false, startTime: performance.now() };
+  G = { mode, level, qIdx: 0, input: '', locked: false, startTime: performance.now() };
   loadProblem();
   tickTimer();
 }
 
 function loadProblem() {
-  G.problem = genProblem(G.mode);
+  G.problem = genProblem(G.mode, G.level);
   G.input = '';
   G.locked = false;
   $('qNum').textContent = `${G.qIdx + 1} / ${TOTAL_Q}`;
@@ -243,26 +289,32 @@ function finishGame(success) {
   const time = (performance.now() - G.startTime) / 1000;
   if (success) {
     Sound.finish();
-    const { entry, rank } = saveResult(G.mode, time);
+    const { entry, rank } = saveResult(G.mode, G.level, time);
     showSuccess(time, entry, rank);
   } else {
     showFailure(G.qIdx + 1, time);
   }
 }
 
-function saveResult(mode, time) {
+function saveResult(mode, level, time) {
   const rec = loadRecords();
-  if (rec.best[mode] == null || time < rec.best[mode]) {
-    rec.best[mode] = time;
+  const key = recKey(level, mode);
+  if (rec.best[key] == null || time < rec.best[key]) {
+    rec.best[key] = time;
   }
-  const entry = { mode, time, date: Date.now() };
+  const entry = { level, mode, time, date: Date.now() };
   rec.history.push(entry);
-  // タイムの速い順で上位30件を保持（ランキングが安定する）
-  rec.history.sort((a, b) => a.time - b.time);
-  rec.history = rec.history.slice(0, 30);
+  // レベルごとにタイムの速い順で上位30件だけ保持（レベル別ランキングが安定する）
+  const kept = [];
+  LEVEL_ORDER.forEach(lv => {
+    kept.push(...rec.history.filter(h => h.level === lv).sort((a, b) => a.time - b.time).slice(0, 30));
+  });
+  rec.history = kept;
   saveRecords(rec);
-  // 今回の記録の順位（全体ランキング内、1始まり。30件から漏れたら0）
-  const rank = rec.history.findIndex(h => h.date === entry.date && h.time === entry.time && h.mode === entry.mode) + 1;
+  // 今回の記録の順位（同レベル内、1始まり。漏れたら0）
+  const rank = rec.history
+    .filter(h => h.level === level).sort((a, b) => a.time - b.time)
+    .findIndex(h => h.date === entry.date && h.time === entry.time && h.mode === entry.mode) + 1;
   return { entry, rank };
 }
 
@@ -273,11 +325,12 @@ function formatDate(ms) {
   return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-// 結果画面のランキング（全モードまとめて上位5・日時付き）
+// 結果画面のランキング（今のレベルの全モードまとめて上位5・日時付き）
 function renderRanking(currentEntry) {
   const rec = loadRecords();
   const box = $('ranking');
-  const top = [...rec.history].sort((a, b) => a.time - b.time).slice(0, 5);
+  const lvl = G.level || currentLevel;
+  const top = rec.history.filter(h => h.level === lvl).sort((a, b) => a.time - b.time).slice(0, 5);
   let rows;
   if (top.length === 0) {
     rows = '<div class="rank-empty">まだ記録がないよ。ノーミスでクリアしよう！</div>';
@@ -293,7 +346,7 @@ function renderRanking(currentEntry) {
         </div>`;
     }).join('');
   }
-  box.innerHTML = `<div class="ranking-title">🏆 ランキング トップ5</div>${rows}`;
+  box.innerHTML = `<div class="ranking-title">🏆 レベル${lvl} ランキング トップ5</div>${rows}`;
 }
 
 // ---- 結果 ----
@@ -313,7 +366,7 @@ function showSuccess(time, entry, rank) {
   const avg = (time / TOTAL_Q).toFixed(1);
   const rankText = rank >= 1 ? `<div>ランキング <b>${rank}</b> い</div>` : '';
   $('resultStats').innerHTML = `
-    <div>${MODES[G.mode].emoji} ${MODES[G.mode].name}モード</div>
+    <div>レベル${G.level}　${MODES[G.mode].emoji} ${MODES[G.mode].name}モード</div>
     <div>🎯 ノーミスでクリア！</div>
     <div>1もんへいきん <b>${avg}</b> びょう</div>
     ${rankText}
@@ -328,7 +381,7 @@ function showFailure(failedQ, time) {
   $('newRecord').style.display = 'none';
   $('resultTime').textContent = 'ざんねん！';
   $('resultStats').innerHTML = `
-    <div>${MODES[G.mode].emoji} ${MODES[G.mode].name}モード</div>
+    <div>レベル${G.level}　${MODES[G.mode].emoji} ${MODES[G.mode].name}モード</div>
     <div><b>${failedQ}</b> もんめで まちがえたよ</div>
     <div>ここまで ${time.toFixed(1)} びょう</div>
     <div style="margin-top:6px; color:#888; font-size:0.9rem">ノーミスで10もんクリアをめざそう！</div>
@@ -358,6 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('btnClear').addEventListener('click', clearRecords);
   $('btnResetRanking').addEventListener('click', clearRecords);
-  $('btnRetry').addEventListener('click', () => startCountdown(G.mode));
+  $('btnRetry').addEventListener('click', () => startCountdown(G.mode, G.level));
   $('btnBackMode').addEventListener('click', initModeSelect);
 });

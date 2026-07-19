@@ -65,9 +65,34 @@ body {
 #screen-mode { padding: 16px; justify-content: center; }
 .lead {
   font-size: 1.2rem;
-  margin: 8px 0 16px;
+  margin: 8px 0 14px;
   color: #555;
   text-align: center;
+}
+.level-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.level-btn {
+  flex: 1;
+  padding: 12px;
+  border: 3px solid #CE93D8;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--purple);
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.level-btn:active { transform: scale(0.96); }
+.level-btn.on {
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(123,31,162,0.35);
 }
 .mode-grid {
   display: grid;
@@ -92,6 +117,7 @@ body {
 .mode-texts { display: flex; flex-direction: column; align-items: flex-start; }
 .mode-name { font-size: 1.3rem; font-weight: 600; }
 .mode-ruby { font-size: 0.8rem; color: #999; }
+.mode-desc { font-size: 0.85rem; color: #999; }
 
 /* ---- 記録パネル ---- */
 .record-panel {
