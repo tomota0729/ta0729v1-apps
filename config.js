@@ -52,6 +52,15 @@ const APPS = [
     enabled: true,
     color: '#7B1FA2',
     description: '10もんをはやくとこう'
+  },
+  {
+    id: 'oekaki',
+    name: 'おえかき',
+    emoji: '🎨',
+    url: 'apps/oekaki/',
+    enabled: true,
+    color: '#EC407A',
+    description: 'すきなえをかこう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>おえかき</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="oe-app">
+    <!-- 上バー -->
+    <div class="topbar">
+      <button class="icon-btn home" title="ホーム" onclick="location.href='../../'">🏠</button>
+      <span class="app-title">🎨 おえかき</span>
+      <button class="icon-btn" id="btnUndo" title="もどる">↩</button>
+      <button class="icon-btn" id="btnClear" title="ぜんぶけす">🗑</button>
+      <button class="icon-btn save" id="btnSave" title="ほぞん">💾</button>
+    </div>
+
+    <!-- 道具バー -->
+    <div class="toolbar">
+      <div class="tool-row" id="colors"></div>
+      <div class="tool-row tool-row2">
+        <div class="seg" id="shapeSeg"></div>
+        <button class="tbtn" id="sizeBtn"><span class="size-prev" id="sizePrev"></span>ふとさ ▾</button>
+        <button class="tbtn mode-btn" id="modeBtn">モード：ペン ▾</button>
+      </div>
+      <div class="popover size-pop" id="sizePop"></div>
+      <div class="panel" id="modePanel">
+        <div class="tool-row" id="tools"></div>
+        <div class="tool-row picker" id="stampPick"></div>
+        <div class="tool-row picker" id="colorPick"></div>
+      </div>
+    </div>
+
+    <!-- キャンバス -->
+    <div class="canvas-box" id="canvasBox">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="hint" id="hint">いろと ペンを えらんで かいてね！</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

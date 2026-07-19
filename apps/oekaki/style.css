@@ -1,0 +1,226 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+:root {
+  --pink: #EC407A;
+  --pink-dark: #AD1457;
+  --pink-soft: #F8BBD0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Klee One', 'Hiragino Maru Gothic Pro', sans-serif;
+  background: #FCE4EC;
+}
+
+.oe-app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ---- 上バー ---- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #FCE4EC;
+  flex-shrink: 0;
+}
+.app-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--pink-dark);
+  margin-right: auto;
+}
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--pink-dark);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 0 #e6b8cc;
+  flex-shrink: 0;
+}
+.icon-btn:active { transform: translateY(3px); box-shadow: none; }
+.icon-btn.save { background: var(--pink); color: #fff; box-shadow: 0 3px 0 #AD1457; }
+
+/* ---- 道具バー ---- */
+.toolbar {
+  padding: 8px 12px;
+  background: #FFF8FB;
+  border-bottom: 2px solid #f0e0e8;
+  flex-shrink: 0;
+}
+.tool-row {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.tool-row + .tool-row { margin-top: 8px; }
+.tool-row2 { margin-top: 8px; }
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 1px #ccc;
+  cursor: pointer;
+}
+.swatch.on { outline: 3px solid var(--pink-dark); outline-offset: 1px; }
+
+.seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #fff;
+  border: 1px solid #e0c8d4;
+  border-radius: 13px;
+}
+.seg .opt {
+  min-width: 38px;
+  height: 34px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.seg .opt.on { background: var(--pink-soft); color: var(--pink-dark); }
+
+.tbtn {
+  padding: 9px 14px;
+  border: 2px solid var(--pink);
+  border-radius: 13px;
+  background: #fff;
+  color: #C2185B;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tbtn:active { transform: scale(0.96); }
+.tbtn.on { background: var(--pink-soft); }
+.mode-btn { margin-left: auto; }
+.size-prev {
+  background: #555;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* 太さポップ */
+.popover {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #eec8d8;
+  border-radius: 14px;
+  align-items: center;
+  gap: 18px;
+}
+.popover.show { display: flex; }
+.size-dot {
+  background: #8E24AA;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.size-dot.on { outline: 3px solid var(--pink-soft); outline-offset: 3px; }
+
+/* モードパネル */
+.panel { display: none; margin-top: 8px; }
+.panel.show { display: block; }
+.tool {
+  flex: 1;
+  min-width: 58px;
+  padding: 9px 4px;
+  border: 1px solid #e0c8d4;
+  border-radius: 13px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.tool .em { font-size: 1.4rem; }
+.tool.on { background: var(--pink-soft); border-color: var(--pink); }
+
+.picker { display: none; margin-top: 8px; }
+.picker.show { display: flex; }
+.pick {
+  width: 42px;
+  height: 42px;
+  font-size: 1.5rem;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pick.on { background: var(--pink-soft); border-color: var(--pink); }
+
+/* ---- キャンバス ---- */
+.canvas-box {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: #fff;
+}
+#canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #fff;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.hint {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  color: #999;
+  text-align: center;
+  padding: 5px 0;
+  background: #FFF8FB;
+}
