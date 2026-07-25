@@ -17,7 +17,7 @@
   <!-- ① トップ（操作・レベル・数の選択） -->
   <section class="screen active" id="screen-top">
     <p class="lead">こえで こたえよう！</p>
-    <p class="sub">おうちのひとが ◯✕を おしてね</p>
+    <p class="sub">3びょうで こたえを タッチ！</p>
 
     <div class="pick-group">
       <div class="pick-label">けいさん</div>
@@ -48,10 +48,9 @@
       <div class="problem" id="problem">6 ＋ 9</div>
     </div>
 
-    <div class="judge-row">
-      <button class="judge ok" id="btnOk"><span class="mark">◯</span><span>せいかい</span></button>
-      <button class="judge wrong" id="btnWrong"><span class="mark">✕</span><span>まちがい</span></button>
-    </div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+
+    <div class="choices" id="choices"></div>
   </section>
 
   <!-- ③ まちがい一覧 → まちがい直し -->
