@@ -61,6 +61,15 @@ const APPS = [
     enabled: true,
     color: '#EC407A',
     description: 'すきなえをかこう'
+  },
+  {
+    id: 'flash',
+    name: 'けいさんフラッシュ',
+    emoji: '⚡',
+    url: 'apps/flash/',
+    enabled: true,
+    color: '#26C6DA',
+    description: 'こえでこたえよう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります
