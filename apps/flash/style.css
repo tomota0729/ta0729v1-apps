@@ -172,7 +172,24 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
+  position: relative;
 }
+.feedback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(120px, 40vw, 240px);
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  animation: fbIn 0.15s ease;
+}
+.feedback.show { display: flex; }
+.feedback.ok    { color: #6cc79a; }
+.feedback.wrong { color: #ec8a83; }
+@keyframes fbIn { from { opacity: 0; } to { opacity: 1; } }
 .problem {
   font-size: clamp(60px, 20vw, 128px);
   font-weight: 600;

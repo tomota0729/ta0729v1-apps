@@ -32,6 +32,34 @@ let G = {
 };
 let timerId = null;
 
+// ---- 音（WebAudio） ----
+const Sound = {
+  ctx: null,
+  init() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } this.resume(); },
+  resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  tone(freqs, dur, type, vol, glideTo) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    freqs.forEach((f, i) => {
+      const o = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      o.type = type;
+      o.connect(g); g.connect(this.ctx.destination);
+      const st = t + i * dur;
+      o.frequency.setValueAtTime(f, st);
+      if (glideTo && i === freqs.length - 1) o.frequency.exponentialRampToValueAtTime(glideTo, st + dur);
+      g.gain.setValueAtTime(vol, st);
+      g.gain.exponentialRampToValueAtTime(0.001, st + dur);
+      o.start(st); o.stop(st + dur);
+    });
+  },
+  correct() { this.tone([988, 1319], 0.12, 'triangle', 0.25); },     // てぃるん（上昇2音）
+  wrong() { this.tone([200], 0.32, 'sawtooth', 0.20, 150); }         // ぶー（低いブザー）
+};
+
+// ---- バイブ（まちがい時。iOS Safari は非対応） ----
+function buzz() { if (navigator.vibrate) { try { navigator.vibrate([120, 60, 120]); } catch (e) {} } }
+
 // ---- 画面切替 ----
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -174,8 +202,18 @@ function showCard() {
   G.currentAns = p.ans;
   $('progress').textContent = `もんだい ${G.idx + 1} / ${G.deck.length}`;
   $('problem').innerHTML = `${p.a} <span class="plus">${p.sym}</span> ${p.b}`;
+  clearFeedback();
   renderChoices(makeChoices(p.ans));
   startTimer();
+}
+
+function showFeedback(ok) {
+  const fb = $('feedback');
+  fb.textContent = ok ? '◯' : '✕';
+  fb.className = 'feedback show ' + (ok ? 'ok' : 'wrong');
+}
+function clearFeedback() {
+  $('feedback').className = 'feedback';
 }
 
 function renderChoices(vals) {
@@ -210,11 +248,14 @@ function revealCorrect(chosenBtn, ok) {
 function handleChoice(v, btn) {
   if (G.answered) return;
   G.answered = true;
+  Sound.resume();
   stopTimer();
   const ok = (v === G.currentAns);
   revealCorrect(btn, ok);
+  showFeedback(ok);
+  if (ok) Sound.correct(); else { Sound.wrong(); buzz(); }
   record(ok);
-  setTimeout(nextCard, ok ? 550 : 800);
+  setTimeout(nextCard, ok ? 600 : 850);
 }
 
 function onTimeout() {
@@ -222,8 +263,10 @@ function onTimeout() {
   G.answered = true;
   timerId = null;
   revealCorrect(null, false);   // 時間切れ＝できなかった問題
+  showFeedback(false);
+  Sound.wrong(); buzz();
   record(false);
-  setTimeout(nextCard, 800);
+  setTimeout(nextCard, 850);
 }
 
 function nextCard() {
@@ -272,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshStart();
 
   $('btnHome').addEventListener('click', () => location.href = '../../');
-  $('btnStart').addEventListener('click', () => { if (G.op && G.level) startGame(); });
+  $('btnStart').addEventListener('click', () => { Sound.init(); if (G.op && G.level) startGame(); });
   $('btnBeginRedo').addEventListener('click', beginRedo);
   $('btnRestart').addEventListener('click', startGame);
   $('btnChangeLevel').addEventListener('click', () => showScreen('top'));
