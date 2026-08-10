@@ -27,9 +27,9 @@ const PREFS = [
   { id:18, name:'福井',   ruby:'ふくい',       group:3 },
   { id:19, name:'山梨',   ruby:'やまなし',     group:3 },
   { id:20, name:'長野',   ruby:'ながの',       group:3 },
-  { id:21, name:'静岡',   ruby:'しずおか',     group:3 },
-  { id:22, name:'愛知',   ruby:'あいち',       group:3 },
-  { id:23, name:'岐阜',   ruby:'ぎふ',         group:3 },
+  { id:21, name:'岐阜',   ruby:'ぎふ',         group:3 },
+  { id:22, name:'静岡',   ruby:'しずおか',     group:3 },
+  { id:23, name:'愛知',   ruby:'あいち',       group:3 },
   // 近畿 group:4
   { id:24, name:'三重',   ruby:'みえ',         group:4 },
   { id:25, name:'滋賀',   ruby:'しが',         group:4 },

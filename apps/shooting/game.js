@@ -217,12 +217,12 @@ function explode(x, y, color, count = 18, spread = 220) {
 // ============================================================
 function readingText(d) {
   const parts = [];
-  if (d.on && d.on !== '―')  parts.push('音 ' + d.on);
   if (d.kun && d.kun !== '―') parts.push('訓 ' + d.kun);
+  if (d.on && d.on !== '―')  parts.push('音 ' + d.on);
   return parts.join('　');
 }
 function addPopup(x, y, kanji, reading) {
-  G.popups.push({ x, y, kanji, reading, life: 1.3, max: 1.3 });
+  G.popups.push({ x, y, kanji, reading, life: 1.8, max: 1.8 });
 }
 
 // ============================================================
@@ -245,13 +245,13 @@ function showReadingReveal(d, big) {
   wrap.innerHTML = `
     <div class="reveal-kanji">${d.kanji}</div>
     <div class="reveal-readings">
-      ${d.on && d.on !== '―' ? `<div><span class="rv-badge on">音</span>${d.on}</div>` : ''}
       ${d.kun && d.kun !== '―' ? `<div><span class="rv-badge kun">訓</span>${d.kun}</div>` : ''}
+      ${d.on && d.on !== '―' ? `<div><span class="rv-badge on">音</span>${d.on}</div>` : ''}
     </div>
     ${big ? '<div class="reveal-clear">★ ボスげきは！ ★</div>' : ''}
   `;
   overlay.appendChild(wrap);
-  const dur = big ? 2200 : 1500;
+  const dur = big ? 2700 : 2000;
   setTimeout(() => {
     wrap.remove();
     if (G) G.mode = 'play';

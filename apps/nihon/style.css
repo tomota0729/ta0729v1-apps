@@ -56,7 +56,7 @@ body {
 /* ---- カテゴリ選択 ---- */
 #screen-cat { padding: 16px; gap: 0; justify-content: center; overflow-y: auto; }
 .lead {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   color: #666;
   margin: 8px 0 14px;
   text-align: center;
@@ -82,8 +82,8 @@ body {
 }
 .cat-btn:active { transform: scale(0.95); }
 .cat-emoji { font-size: 2.2rem; }
-.cat-name { font-size: 1rem; font-weight: 600; }
-.cat-ruby { font-size: 0.78rem; color: #999; }
+.cat-name { font-size: 1.2rem; font-weight: 600; }
+.cat-ruby { font-size: 0.9rem; color: #999; }
 .cat-count { font-size: 0.75rem; color: #bbb; }
 
 /* ---- クイズ ---- */
@@ -100,8 +100,8 @@ body {
   padding: 0 2px;
   flex-shrink: 0;
 }
-.q-num   { font-size: 0.95rem; color: #888; }
-.q-score { font-size: 0.95rem; color: #E65100; font-weight: 600; }
+.q-num   { font-size: 1.05rem; color: #888; }
+.q-score { font-size: 1.05rem; color: #E65100; font-weight: 600; }
 
 .question-card {
   width: 100%;
@@ -112,7 +112,7 @@ body {
   flex-shrink: 0;
 }
 .question-text {
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: #333;
   line-height: 1.7;
@@ -141,14 +141,14 @@ body {
   background: #FF6F00;
   color: #fff;
   border-radius: 20px;
-  padding: 3px 14px;
-  font-size: 0.9rem;
+  padding: 4px 15px;
+  font-size: 1rem;
   font-weight: 600;
 }
 .hee-text {
-  font-size: 0.98rem;
+  font-size: 1.18rem;
   color: #5D4037;
-  line-height: 1.7;
+  line-height: 1.75;
   text-align: center;
   white-space: pre-line;
 }
@@ -178,9 +178,9 @@ body {
   background: #fff;
   border: 3px solid #ddd;
   border-radius: 14px;
-  padding: 12px 8px;
+  padding: 14px 10px;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #333;
   cursor: pointer;
@@ -228,7 +228,8 @@ body {
 
 @media (max-height: 680px) {
   .question-card { padding: 12px; }
-  .question-text { font-size: 1rem; }
-  .choice-btn { padding: 10px 6px; font-size: 0.93rem; }
+  .question-text { font-size: 1.2rem; }
+  .choice-btn { padding: 11px 7px; font-size: 1.05rem; }
+  .hee-text { font-size: 1.05rem; }
   .hee-card { padding: 10px 12px; }
 }

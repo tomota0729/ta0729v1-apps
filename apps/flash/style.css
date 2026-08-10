@@ -169,10 +169,11 @@ body {
 .problem-wrap {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   width: 100%;
   position: relative;
+  padding-top: clamp(16px, 7vh, 64px);
 }
 .feedback {
   position: absolute;
@@ -225,13 +226,13 @@ body {
 }
 .choice-btn {
   flex: 1;
-  height: clamp(80px, 22vw, 110px);
+  height: clamp(120px, 32vw, 180px);
   border: 3px solid #e5ecf5;
-  border-radius: 20px;
+  border-radius: 22px;
   background: var(--card);
   color: var(--ink);
   font-family: inherit;
-  font-size: clamp(1.8rem, 8vw, 2.6rem);
+  font-size: clamp(2.2rem, 10vw, 3.4rem);
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(90,107,136,0.10);

@@ -70,6 +70,15 @@ const APPS = [
     enabled: true,
     color: '#26C6DA',
     description: 'こえでこたえよう'
+  },
+  {
+    id: 'sekai',
+    name: 'せかいの国',
+    emoji: '🌍',
+    url: 'apps/sekai/',
+    enabled: true,
+    color: '#0277BD',
+    description: 'せかいのくにをおぼえよう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります

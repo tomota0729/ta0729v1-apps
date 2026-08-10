@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>せかいの国タッチ</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-header">
+    <button class="back-btn" id="btnHome" title="ホーム">🏠</button>
+    <span class="app-title">🌍 せかいの国</span>
+  </div>
+
+  <!-- ① 大陸選択 -->
+  <section class="screen active" id="screen-region">
+    <p class="lead">どの たいりくで あそぶ？</p>
+    <div class="region-grid" id="regionGrid"></div>
+  </section>
+
+  <!-- ② クイズ -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <span class="q-progress" id="qProgress">1 / 5</span>
+      <span class="q-score" id="qScore">◯ 0</span>
+    </div>
+
+    <div class="map-area">
+      <div class="map-wrap" id="mapWrap"></div>
+      <div class="zoom-ctrl" id="zoomCtrl">
+        <button class="zoom-btn" data-z="country">🔍 アップ</button>
+        <button class="zoom-btn" data-z="region">🗺 たいりく</button>
+        <button class="zoom-btn" data-z="full">🌍 ぜんたい</button>
+      </div>
+    </div>
+
+    <p class="question-text" id="questionText">この国は どこ？</p>
+
+    <div class="choices" id="choices"></div>
+    <button class="btn-next" id="btnNext" style="display:none;">つぎへ ▶</button>
+  </section>
+
+  <!-- ③ 結果 -->
+  <section class="screen" id="screen-result">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="result-score-text" id="resultScoreText"></div>
+
+    <div class="nigate-wrap" id="nigateWrap">
+      <div class="nigate-label">にがてな国</div>
+      <div class="nigate-list" id="nigateList"></div>
+    </div>
+
+    <div class="result-btns">
+      <button class="btn btn-primary" id="btnRetry">🔄 もういちど</button>
+      <button class="btn btn-secondary" id="btnBackRegion">たいりくを えらぶ</button>
+    </div>
+
+    <p class="map-credit">
+      地図: flekschas/simple-world-map（CC BY-SA 3.0）
+    </p>
+  </section>
+
+  <script src="sekai-map.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
