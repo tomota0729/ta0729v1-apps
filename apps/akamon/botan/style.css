@@ -1,32 +1,7 @@
-[hidden]{display:none!important}
-:root{
-  --bg:#E8F0F7; --paper:#FFFFFF; --ink:#1C2B45; --muted:#56678A; --line:#C6D3E3; --grid:#8FA5C2;
-  --trail:#FFE28A; --accent:#2F6FDB; --ok:#16935A; --ng:#D6363A; --soft:#F3F7FB;
-  --b-up:#E0513B; --b-down:#2F6FDB; --b-left:#15935A; --b-right:#DB9A06;
-  --shadow:0 2px 0 rgba(28,43,69,.18);
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Klee One","Hiragino Maru Gothic ProN","Meiryo",sans-serif;font-size:17px;line-height:1.6;
-  padding-inline:16px;padding-block:16px 32px}
-.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
-button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-
-/* ヘッダー */
-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-.head-left{display:flex;align-items:center;gap:12px}
-.back-btn{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.1);border-radius:50%;width:44px;height:44px;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.back-btn:active{transform:scale(.9)}
-h1{font-family:"Klee One","Hiragino Maru Gothic ProN",sans-serif;font-weight:600;font-size:clamp(24px,4.5vw,32px);line-height:1.2;margin:0}
+/* ボタンで動かそう - style.css（共通は ../common/akamon.css） */
+:root{--b-up:#E0513B; --b-down:#2F6FDB; --b-left:#15935A; --b-right:#DB9A06}
 h1 .syms{display:inline-flex;gap:4px;font-size:.7em;vertical-align:middle;margin-left:8px}
-.sub{margin:2px 0 0;color:var(--muted);font-size:13px}
-.score{display:flex;align-items:center;gap:8px;background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-weight:700;font-variant-numeric:tabular-nums}
-.score b{color:var(--ng);font-size:22px}
-
-/* もんだいの パネル（たて1れつ） */
-.panel{background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:14px;
-  display:flex;flex-direction:column;align-items:center;gap:10px}
-h2{font-size:18px;margin:0;font-weight:700;text-align:center}
+@media (max-width:480px){h1 .syms{display:flex;margin:4px 0 0}}
 
 /* ボード */
 svg.board{width:100%;max-width:560px;height:auto;display:block;touch-action:manipulation;user-select:none}
@@ -43,17 +18,16 @@ svg.board{width:100%;max-width:560px;height:auto;display:block;touch-action:mani
 .car.jump{transition:none}
 .shake{animation:shake .45s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion: reduce){.car{transition:none}.shake{animation:none}}
+@media (min-width:600px) and (min-height:600px){svg.board{max-width:none}}
 
-/* おした じゅん・ひとこと */
+/* おした じゅん */
 .chips{display:flex;gap:6px;align-items:center;justify-content:center;width:100%;min-height:40px;overflow-x:auto}
 .chip,.slot{width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center}
 .chip{color:#fff;font-size:20px;box-shadow:var(--shadow)}
 .slot{border:2px dashed var(--grid);font-size:13px;color:var(--muted)}
-.say{width:100%;min-height:2.9em;padding:8px 12px;border-radius:14px;background:var(--soft);font-weight:700}
-.say.ok{background:color-mix(in srgb,var(--ok) 18%,var(--paper))}
-.say.ng{background:color-mix(in srgb,var(--ng) 16%,var(--paper))}
 
-/* ボタン */
+/* ▲●◆★ ボタン */
 .k-up{background:var(--b-up)} .k-down{background:var(--b-down)} .k-left{background:var(--b-left)} .k-right{background:var(--b-right)}
 .pad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%;max-width:560px}
 .pad-btn{font:inherit;border:0;border-radius:16px;color:#fff;cursor:pointer;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;
@@ -61,33 +35,3 @@ svg.board{width:100%;max-width:560px;height:auto;display:block;touch-action:mani
 .pad-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(28,43,69,.35)}
 .pad-btn .s{font-size:28px;line-height:1}
 .pad-btn .l{font-size:13px;font-weight:700;line-height:1.3}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
-.btn{font:inherit;font-weight:700;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:12px;padding:6px 14px;cursor:pointer}
-.btn.primary{background:var(--ink);color:var(--paper)}
-
-/* はなまる */
-#hana{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:10}
-#hana svg{width:min(60vw,300px);height:auto}
-#hana .ring{fill:none;stroke:#E23B4A;stroke-width:10;stroke-linecap:round;stroke-dasharray:1200;stroke-dashoffset:1200}
-#hana.on .ring{animation:draw 1s ease-out forwards}
-#hana text{fill:#E23B4A;font-family:"Klee One",sans-serif;font-size:40px;text-anchor:middle;opacity:0}
-#hana.on text{animation:fade 1.6s .5s forwards}
-#hana.out{transition:opacity .5s;opacity:0}
-@keyframes draw{to{stroke-dashoffset:0}}
-@keyframes fade{0%{opacity:0}30%{opacity:1}100%{opacity:1}}
-@media (prefers-reduced-motion: reduce){.car{transition:none}.shake{animation:none}#hana.on .ring{animation:none;stroke-dashoffset:0}#hana.on text{animation:none;opacity:1}}
-
-/* スマホ幅 */
-@media (max-width:480px){
-  h1 .syms{display:flex;margin:4px 0 0}
-}
-
-/* iPad・パソコン：スクロールなしで1画面に収める（ボードが のこりの たかさに あわせて ちぢむ） */
-@media (min-width:600px) and (min-height:600px){
-  html,body{height:100%;overflow:hidden}
-  body{height:100dvh;display:flex;flex-direction:column;padding-block:12px}
-  .wrap{flex:1;min-height:0;width:100%}
-  #p-quiz{flex:1;min-height:0;display:flex}
-  .panel{flex:1;min-height:0;overflow:hidden}
-  svg.board{flex:1 1 0;min-height:150px;max-width:none}
-}

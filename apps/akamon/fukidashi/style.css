@@ -1,0 +1,23 @@
+/* ふきだしの ことば - style.css（共通は ../common/akamon.css） */
+.stage{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.scene{margin:0;font-size:20px;text-align:center;max-width:30em}
+.scene .pic{display:block;font-size:64px;line-height:1.2}
+
+/* ひとと ふきだし */
+.talk{display:flex;align-items:center;gap:14px;max-width:100%}
+.who{font-size:64px;line-height:1;flex:none}
+.bubble{position:relative;background:var(--paper);border:3px solid var(--ink);border-radius:22px;padding:14px 20px;font-size:24px;font-weight:600;line-height:1.6}
+.bubble::before{content:"";position:absolute;left:-15px;top:50%;margin-top:-10px;border:10px solid transparent;border-right:14px solid var(--ink);border-left:0}
+.bubble::after{content:"";position:absolute;left:-10px;top:50%;margin-top:-7px;border:7px solid transparent;border-right:11px solid var(--paper);border-left:0}
+.hole{display:inline-block;min-width:2.4em;padding:0 .4em;margin:0 .15em;border:3px dashed var(--muted);border-radius:10px;color:var(--muted);text-align:center;background:var(--soft)}
+.hole.ok{border-style:solid;border-color:var(--ok);color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--paper))}
+
+/* えらぶ ボタン（たて 3つ） */
+.choices{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
+.choice{font:inherit;font-size:21px;font-weight:600;text-align:left;border:3px solid var(--line);background:var(--paper);color:var(--ink);border-radius:16px;
+  padding:10px 16px;cursor:pointer;box-shadow:0 3px 0 rgba(28,43,69,.2)}
+.choice:active{transform:translateY(2px)}
+.choice .no{color:var(--muted);margin-right:8px}
+.choice.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--paper))}
+.choice.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 12%,var(--paper))}
+.choice[disabled]{cursor:default}

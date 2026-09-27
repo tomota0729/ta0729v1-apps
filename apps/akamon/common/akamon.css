@@ -1,0 +1,63 @@
+/* 赤門クイズ 共通 - akamon.css
+   ヘッダー・パネル・ひとこと・ボタン・はなまる・「iPad たて1画面」レイアウト */
+[hidden]{display:none!important}
+:root{
+  --bg:#E8F0F7; --paper:#FFFFFF; --ink:#1C2B45; --muted:#56678A; --line:#C6D3E3; --grid:#8FA5C2;
+  --trail:#FFE28A; --accent:#2F6FDB; --ok:#16935A; --ng:#D6363A; --soft:#F3F7FB;
+  --shadow:0 2px 0 rgba(28,43,69,.18);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Klee One","Hiragino Maru Gothic ProN","Meiryo",sans-serif;font-size:17px;line-height:1.6;
+  padding-inline:16px;padding-block:16px 32px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ヘッダー（⬅で 赤門クイズの いちらんへ） */
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.head-left{display:flex;align-items:center;gap:12px}
+.back-btn{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.1);border-radius:50%;width:44px;height:44px;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back-btn:active{transform:scale(.9)}
+h1{font-family:"Klee One","Hiragino Maru Gothic ProN",sans-serif;font-weight:600;font-size:clamp(24px,4.5vw,32px);line-height:1.2;margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+.score{display:flex;align-items:center;gap:8px;background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-weight:700;font-variant-numeric:tabular-nums}
+.score b{color:var(--ng);font-size:22px}
+
+/* もんだいの パネル（たて1れつ） */
+.panel{background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:14px;
+  display:flex;flex-direction:column;align-items:center;gap:10px}
+h2{font-size:18px;margin:0;font-weight:700;text-align:center}
+
+/* ひとこと */
+.say{width:100%;min-height:2.9em;padding:8px 12px;border-radius:14px;background:var(--soft);font-weight:700}
+.say.ok{background:color-mix(in srgb,var(--ok) 18%,var(--paper))}
+.say.ng{background:color-mix(in srgb,var(--ng) 16%,var(--paper))}
+
+/* ボタン */
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+.btn{font:inherit;font-weight:700;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:12px;padding:6px 14px;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn[disabled]{opacity:.4;cursor:default}
+
+/* はなまる */
+#hana{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:10}
+#hana svg{width:min(60vw,300px);height:auto}
+#hana .ring{fill:none;stroke:#E23B4A;stroke-width:10;stroke-linecap:round;stroke-dasharray:1200;stroke-dashoffset:1200}
+#hana.on .ring{animation:draw 1s ease-out forwards}
+#hana text{fill:#E23B4A;font-family:"Klee One",sans-serif;font-size:40px;text-anchor:middle;opacity:0}
+#hana.on text{animation:fade 1.6s .5s forwards}
+#hana.out{transition:opacity .5s;opacity:0}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{0%{opacity:0}30%{opacity:1}100%{opacity:1}}
+@media (prefers-reduced-motion: reduce){#hana.on .ring{animation:none;stroke-dashoffset:0}#hana.on text{animation:none;opacity:1}}
+
+/* iPad・パソコン：スクロールなしで1画面に収める。
+   .grow を つけた ようそ（ボードなど）が のこりの たかさに あわせて ちぢむ */
+@media (min-width:600px) and (min-height:600px){
+  html,body{height:100%;overflow:hidden}
+  body{height:100dvh;display:flex;flex-direction:column;padding-block:12px}
+  .wrap{flex:1;min-height:0;width:100%}
+  main.q{flex:1;min-height:0;display:flex}
+  .panel{flex:1;min-height:0;overflow:hidden}
+  .grow{flex:1 1 0;min-height:150px}
+}

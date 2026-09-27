@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ボタンで動かそう</title>
+  <title>ふきだしの ことば</title>
   <link rel="stylesheet" href="../common/akamon.css?v=1">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=1">
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -14,25 +14,30 @@
     <div class="head-left">
       <button class="back-btn" onclick="location.href='../'" aria-label="赤門クイズへ もどる">⬅</button>
       <div>
-        <h1>ボタンで動かそう<span class="syms" aria-hidden="true"><span style="color:var(--b-up)">▲</span><span style="color:var(--b-down)">●</span><span style="color:var(--b-left)">◆</span><span style="color:var(--b-right)">★</span></span></h1>
-        <p class="sub">さんすう 1ねんせい　ボタンを 7かい おして 🚗を 🏠へ とめよう</p>
+        <h1>ふきだしの ことば</h1>
+        <p class="sub">こくご 1ねんせい　ばめんに あう ことばを えらぼう</p>
       </div>
     </div>
     <div class="score" aria-live="polite">はなまる <b id="score">0</b> こ</div>
   </header>
   <main class="q">
     <div class="panel">
-      <h2 id="q-title"></h2>
-      <svg class="board grow" id="b-quiz" aria-label="ますめ"></svg>
-      <div class="chips" id="q-chips"></div>
+      <h2>ふきだしの 「？」に はいる ただしい ことばを えらぼう。</h2>
+      <div class="stage grow">
+        <p class="scene" id="scene"></p>
+        <div class="talk">
+          <span class="who" id="who" aria-hidden="true"></span>
+          <div class="bubble" id="bubble"></div>
+        </div>
+      </div>
       <div class="say" id="say-quiz" aria-live="polite"></div>
-      <div class="pad" id="pad-quiz"></div>
+      <div class="choices" id="choices"></div>
       <div class="row" id="q-actions"></div>
     </div>
   </main>
 </div>
 
   <script src="../common/akamon.js?v=1"></script>
-  <script src="game.js?v=6"></script>
+  <script src="game.js?v=1"></script>
 </body>
 </html>

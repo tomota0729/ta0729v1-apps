@@ -1,0 +1,21 @@
+/* かずの ならび - style.css（共通は ../common/akamon.css） */
+.stage{width:100%;display:flex;align-items:center;justify-content:center}
+
+/* かずの ならび（□ーーーーー□） */
+.seq{display:flex;align-items:center;justify-content:center;width:100%}
+.box{width:min(13vw,92px);aspect-ratio:1;max-width:100%;flex:none;border:3px solid var(--ink);border-radius:12px;background:var(--paper);
+  display:grid;place-items:center;font-size:min(8vw,52px);font-weight:600;font-variant-numeric:tabular-nums}
+.box.blank{background:var(--soft);border-style:dashed;color:var(--muted)}
+.box.filled-ok{background:color-mix(in srgb,var(--ok) 18%,var(--paper));border-style:solid;color:var(--ok)}
+.box.filled-ng{background:color-mix(in srgb,var(--ng) 14%,var(--paper));border-style:solid;color:var(--ng)}
+.link{flex:1 1 0;max-width:36px;min-width:6px;height:3px;background:var(--ink)}
+
+/* えらぶ ボタン（2×2） */
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;max-width:560px}
+.choice{font:inherit;font-size:24px;font-weight:600;border:3px solid var(--line);background:var(--paper);color:var(--ink);border-radius:16px;
+  padding:12px 8px;cursor:pointer;box-shadow:0 3px 0 rgba(28,43,69,.2);font-variant-numeric:tabular-nums}
+.choice:active{transform:translateY(2px)}
+.choice .no{color:var(--muted);margin-right:6px}
+.choice.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--paper))}
+.choice.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 12%,var(--paper))}
+.choice[disabled]{cursor:default}
