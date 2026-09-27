@@ -1,9 +1,32 @@
 // 赤門クイズ 共通 - years.js
-// ねんべつ テスト：それぞれの 回の「大問の ならびと 問題の しゅるい」だけを かいた もの。
+// ランダム テストの もと：17回ぶんの 回ごとに「大問の ならびと 問題の しゅるい」だけを かいた もの。
 // 問題の 文・数は GENS（gens.js）が 毎回 つくる。もとの テストの 文や 数の くみあわせは のせない。
 // items は [ジェネレーター, しゅるい]。note … にた べつの もんだいで かわりに だして いる ところ。
 
 const Y = (g, ...vs) => vs.map(v => [g, v]);
+
+// ランダム テスト：17回ぶんの 問題の しゅるいから n こ えらぶ（よく でる しゅるいほど でやすい）。
+// 本番と おなじように、かず → けいさん → ぶんしょうだい の じゅんに ならべ、おなじ しゅるいを 大問に まとめる。
+const GEN_ORDER = ['kazoe', 'kakure10', 'ikutsu', 'ookisa', 'okane', 'card', 'nanbanme', 'gyouretsu', 'keisan', 'narabi', 'kurikaeshi', 'saikoro', 'tokei', 'bunsho'];
+const GEN_TITLE = {kazoe: 'かずを かぞえる', kakure10: '10の まとまり', ikutsu: 'いくつと いくつ', ookisa: 'かずの 大きさ', okane: 'おかね', card: 'カード',
+  nanbanme: 'なんばんめ', gyouretsu: 'ならんだ 人', keisan: 'けいさん', narabi: 'かずの ならび', kurikaeshi: 'きまり', saikoro: 'さいころ', tokei: 'とけい', bunsho: 'ぶんしょうだい'};
+function randomYear(n) {
+  const pool = YEARS.flatMap(y => y.dai.flatMap(d => d.items));
+  const picked = [], seen = new Set();
+  for (let guard = 0; picked.length < n && guard < 500; guard++) {
+    const it = pool[Math.floor(Math.random() * pool.length)], key = it.join('/');
+    if (seen.has(key) && guard < 300) continue;   // おなじ しゅるいは なるべく かさねない
+    seen.add(key); picked.push(it);
+  }
+  picked.sort((a, b) => GEN_ORDER.indexOf(a[0]) - GEN_ORDER.indexOf(b[0]));
+  const dai = [];
+  picked.forEach(it => {
+    const last = dai[dai.length - 1];
+    if (last && last.g === it[0]) last.items.push(it);
+    else dai.push({g: it[0], t: GEN_TITLE[it[0]] || '', items: [it]});
+  });
+  return {id: `random-${n}`, label: `ランダム ${n}もん`, dai};
+}
 
 const YEARS = [
   {id: '2025-11', label: '2025ねん 11がつ', dai: [

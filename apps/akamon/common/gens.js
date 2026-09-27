@@ -391,19 +391,3 @@ const GENS = (() => {
     }
   };
 })();
-
-// 単元（れんしゅう用）：名前・絵文字・つかう ジェネレーター
-const UNITS = {
-  kakure10: {name: '10の まとまり', emoji: '✋', color: '#15935A', items: [['kakure10', 'hand'], ['kakure10', 'ato10'], ['kakure10', 'total']]},
-  kazoe: {name: 'かずを かぞえる', emoji: '🍓', color: '#E0513B', items: [['kazoe', 'plain'], ['kazoe', 'mixed'], ['kazoe', 'awase']]},
-  ookisa: {name: 'かずの 大きさ', emoji: '🔝', color: '#16A085', items: ['max1', 'max2', 'min', 'rank', 'middle', 'more'].map(v => ['ookisa', v])},
-  ikutsu: {name: 'いくつと いくつ', emoji: '🧩', color: '#27AE60', items: [['ikutsu', 'ato'], ['ikutsu', 'toru'], ['card', 'plus3'], ['card', 'minus3'], ['card', 'plus5'], ['card', 'minus5']]},
-  okane: {name: 'おかね', emoji: '💰', color: '#B7950B', items: [['okane', null]]},
-  nanbanme: {name: 'なんばんめ', emoji: '🌰', color: '#DB9A06', items: [['nanbanme', 'one'], ['nanbanme', 'which'], ['nanbanme', 'between']]},
-  gyouretsu: {name: 'ならんだ 人', emoji: '🧒', color: '#8E44AD', items: [['gyouretsu', 'mae'], ['gyouretsu', 'ushiro'], ['gyouretsu', 'ushironin'], ['gyouretsu', 'aida'], ['gyouretsu', 'zenbu']]},
-  keisan: {name: 'けいさん', emoji: '➕', color: '#2F6FDB', items: ['add', 'add_carry', 'sub', 'sub_borrow', 'box_a', 'box_b', 'sub_box', 'box_sub', 'three'].map(v => ['keisan', v])},
-  bunsho: {name: 'ぶんしょうだい', emoji: '📖', color: '#C0392B', items: ['fueru', 'nokori', 'chigai', 'hajime', 'noriori', 'matomari', 'wakeru', 'hako', 'nenrei', 'hanbun', 'ippai', 'moratte'].map(v => ['bunsho', v])},
-  tokei: {name: 'とけい', emoji: '🕒', color: '#1C6E8C', items: [['tokei', 'ji'], ['tokei', 'han'], ['tokei', 'ato']]},
-  narabi: {name: 'きまりと ならび', emoji: '🔢', color: '#7F8C8D', items: [['narabi', 'up1'], ['narabi', 'up2'], ['narabi', 'down1'], ['kurikaeshi', 'repeat'], ['kurikaeshi', 'count'], ['kurikaeshi', 'updown']]},
-  saikoro: {name: 'さいころ', emoji: '🎲', color: '#34495E', items: [['saikoro', 'sum'], ['saikoro', 'other']]}
-};
