@@ -94,6 +94,11 @@ body {
   color: #fff;
   box-shadow: 0 3px 10px rgba(123,31,162,0.35);
 }
+.count-row .level-btn {
+  padding: 8px 4px;
+  font-size: 1rem;
+  border-color: #E1BEE7;
+}
 .mode-grid {
   display: grid;
   grid-template-columns: 1fr;

@@ -51,7 +51,7 @@ const APPS = [
     url: 'apps/keisan/',
     enabled: true,
     color: '#7B1FA2',
-    description: '10もんをはやくとこう'
+    description: '10〜100もんをはやくとこう'
   },
   {
     id: 'oekaki',
