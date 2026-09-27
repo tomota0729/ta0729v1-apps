@@ -1,4 +1,4 @@
-// ボタンでうごかそう - game.js
+// ボタンで動かそう - game.js
 
 // ---- サウンド（簡易WebAudio） ----
 const Sound={

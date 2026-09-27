@@ -81,13 +81,13 @@ const APPS = [
     description: 'せかいのくにをおぼえよう'
   },
   {
-    id: 'botan',
-    name: 'ボタンでうごかそう',
-    emoji: '🚗',
-    url: 'apps/botan/',
+    id: 'akamon',
+    name: '赤門クイズ',
+    emoji: '⛩',
+    url: 'apps/akamon/',
     enabled: true,
-    color: '#2F6FDB',
-    description: 'きまりどおりにくるまをうごかそう'
+    color: '#D84315',
+    description: 'もんだいをあそんでとこう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります

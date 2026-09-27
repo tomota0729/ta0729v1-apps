@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>赤門クイズ</title>
+  <link rel="stylesheet" href="../../style.css">
+  <style>
+    .top-bar { width: 100%; max-width: 900px; }
+    .back-btn {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .back-btn:active { transform: scale(0.9); }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button class="back-btn" onclick="location.href='../../'" aria-label="ホームへ もどる">🏠</button>
+  </div>
+
+  <header>
+    <h1>⛩ 赤門クイズ</h1>
+    <p class="subtitle">あそびながら もんだいを といてみよう</p>
+  </header>
+
+  <main class="app-grid" id="appGrid"></main>
+
+  <script>
+    // 赤門クイズの なかの もんだい（ふえたら ここに ついか）
+    const QUIZZES = [
+      {
+        name: 'ボタンで動かそう',
+        emoji: '🚗',
+        url: 'botan/',
+        color: '#2F6FDB',
+        description: 'きまりどおりにくるまをうごかそう'
+      }
+    ];
+
+    const grid = document.getElementById('appGrid');
+    QUIZZES.forEach(q => {
+      const card = document.createElement('a');
+      card.href = q.url;
+      card.className = 'app-card';
+      card.style.borderColor = q.color;
+      card.style.background = `linear-gradient(145deg, white, ${q.color}22)`;
+      card.innerHTML = `
+        <span class="emoji">${q.emoji}</span>
+        <span class="name">${q.name}</span>
+        <span class="desc">${q.description}</span>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>
