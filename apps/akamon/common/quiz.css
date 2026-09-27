@@ -1,0 +1,47 @@
+/* 赤門クイズ 共通 - quiz.css（ねんべつ テスト・たんげん れんしゅう の 問題画面） */
+.prog{align-self:stretch;display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prog b{color:var(--ink)}
+.intro{align-self:stretch;margin:0;font-size:15px;color:var(--muted);line-height:1.6}
+.stem{align-self:stretch;margin:0;font-size:21px;font-weight:700;line-height:1.7;text-align:left}
+.fig{width:100%;display:flex;align-items:center;justify-content:center;min-height:110px}
+.fig svg{width:100%;height:auto;max-height:320px}
+.fig:empty{display:none}
+
+.choices{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
+.choice{font:inherit;font-size:22px;font-weight:600;min-width:120px;border:3px solid var(--line);background:var(--paper);color:var(--ink);
+  border-radius:16px;padding:10px 14px;cursor:pointer;box-shadow:0 3px 0 rgba(28,43,69,.2)}
+.choice:active{transform:translateY(2px)}
+.choice .no{color:var(--muted);margin-right:6px}
+.choice.picked{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--paper))}
+.choice.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--paper))}
+.choice.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 12%,var(--paper))}
+.choice[disabled]{cursor:default}
+
+/* 表紙・けっか（#qview の かわりに #other に でる） */
+#qview,#other{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;min-height:0}
+#other{justify-content:center}
+.cover{align-self:stretch;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.cover .big{font-size:28px;font-weight:700}
+.cover .note{font-size:14px;color:var(--muted)}
+.result{align-self:stretch;overflow-y:auto;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+.score-big{font-size:34px;font-weight:700;text-align:center}
+.dai-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:16px}
+.dai-row .t{min-width:5.5em;font-weight:700}
+.mk{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font-weight:700;color:#fff}
+.mk.o{background:var(--ok)} .mk.x{background:var(--ng)} .mk.n{background:var(--grid)}
+.miss{border:2px solid var(--line);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.6}
+.miss .h{font-weight:700}
+.miss .fig{min-height:0}
+.miss .fig svg{max-height:150px}
+
+/* いちらん（ねんべつ・たんげん） */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;width:100%}
+.card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;border-radius:18px;background:var(--paper);border:3px solid var(--line);
+  text-decoration:none;color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.card .e{font-size:40px;line-height:1}
+.card .n{font-size:18px;font-weight:700;text-align:center}
+.card .d{font-size:13px;color:var(--muted);text-align:center}
+.page-scroll{flex:1;min-height:0;overflow-y:auto;padding-bottom:12px}
+@media (min-width:600px) and (min-height:600px){
+  .fig.grow svg{height:100%;max-height:none}
+}

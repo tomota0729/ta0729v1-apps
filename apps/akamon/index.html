@@ -17,6 +17,15 @@
       display: flex; align-items: center; justify-content: center;
     }
     .back-btn:active { transform: scale(0.9); }
+    .subject {
+      width: 100%; max-width: 900px;
+      font-size: 1.3rem; color: #555;
+      margin: 8px 0 12px;
+      border-bottom: 3px solid rgba(0,0,0,0.08);
+      padding-bottom: 4px;
+    }
+    .app-grid + .subject { margin-top: 32px; }
+    .empty { color: #999; font-size: 0.95rem; width: 100%; max-width: 900px; }
   </style>
 </head>
 <body>
@@ -29,22 +38,70 @@
     <p class="subtitle">あそびながら もんだいを といてみよう</p>
   </header>
 
-  <main class="app-grid" id="appGrid"></main>
+  <h2 class="subject">🏁 ぜんこく とういつ テスト（1ねんせい さんすう）</h2>
+  <main class="app-grid" id="grid-test"></main>
+  <h2 class="subject">🔢 さんすう</h2>
+  <main class="app-grid" id="grid-sansu"></main>
+  <h2 class="subject">📖 こくご</h2>
+  <main class="app-grid" id="grid-kokugo"></main>
 
   <script>
     // 赤門クイズの なかの もんだい（ふえたら ここに ついか）
+    // subject: 'sansu'（さんすう） / 'kokugo'（こくご）
     const QUIZZES = [
       {
+        subject: 'test',
+        name: 'ねんべつ テスト',
+        emoji: '📅',
+        url: 'nenbetsu/',
+        color: '#E0513B',
+        description: '17かいぶん・にた もんだいで ちょうせん'
+      },
+      {
+        subject: 'test',
+        name: 'たんげん れんしゅう',
+        emoji: '✏️',
+        url: 'renshu/',
+        color: '#2F6FDB',
+        description: 'にがてな ところを 10もんずつ'
+      },
+      {
+        subject: 'sansu',
         name: 'ボタンで動かそう',
         emoji: '🚗',
         url: 'botan/',
         color: '#2F6FDB',
         description: 'きまりどおりにくるまをうごかそう'
+      },
+      {
+        subject: 'sansu',
+        name: 'かずの ならび',
+        emoji: '🔢',
+        url: 'narabi/',
+        color: '#DB9A06',
+        description: 'おなじかずずつふえたりへったり'
+      },
+      {
+        subject: 'kokugo',
+        name: 'ふきだしの ことば',
+        emoji: '💬',
+        url: 'fukidashi/',
+        color: '#15935A',
+        description: 'ばめんにあうことばをえらぼう'
       }
     ];
 
-    const grid = document.getElementById('appGrid');
-    QUIZZES.forEach(q => {
+    ['test', 'sansu', 'kokugo'].forEach(sub => {
+      const grid = document.getElementById('grid-' + sub);
+      const list = QUIZZES.filter(q => q.subject === sub);
+      if (!list.length) {
+        grid.outerHTML = '<p class="empty">もうすぐ ふえるよ</p>';
+        return;
+      }
+      list.forEach(q => addCard(grid, q));
+    });
+
+    function addCard(grid, q) {
       const card = document.createElement('a');
       card.href = q.url;
       card.className = 'app-card';
@@ -56,7 +113,7 @@
         <span class="desc">${q.description}</span>
       `;
       grid.appendChild(card);
-    });
+    }
   </script>
 </body>
 </html>
