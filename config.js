@@ -79,6 +79,15 @@ const APPS = [
     enabled: true,
     color: '#0277BD',
     description: 'せかいのくにをおぼえよう'
+  },
+  {
+    id: 'botan',
+    name: 'ボタンでうごかそう',
+    emoji: '🚗',
+    url: 'apps/botan/',
+    enabled: true,
+    color: '#2F6FDB',
+    description: 'きまりどおりにくるまをうごかそう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります

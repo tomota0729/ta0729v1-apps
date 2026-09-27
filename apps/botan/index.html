@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ボタンでうごかそう</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="head-left">
+    <button class="back-btn" onclick="location.href='../../'" aria-label="ホームへ もどる">🏠</button>
+    <div>
+      <h1>ボタンで すすむ くるま<span class="syms" aria-hidden="true"><span style="color:var(--b-up)">▲</span><span style="color:var(--b-down)">●</span><span style="color:var(--b-left)">◆</span><span style="color:var(--b-right)">★</span></span></h1>
+      <p class="sub">さんすう 1ねんせい　きまりを おぼえて、🚗を ボタンで うごかそう</p>
+    </div>
+    </div>
+    <div class="score" aria-live="polite">はなまる <b id="score">0</b> こ</div>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-rule" aria-selected="true" data-tab="rule">① きまりを しろう</button>
+    <button class="tab" role="tab" id="t-free" aria-selected="false" data-tab="free">② じゆうに うごかそう</button>
+    <button class="tab" role="tab" id="t-quiz" aria-selected="false" data-tab="quiz">③ もんだいに ちょうせん</button>
+  </nav>
+  <!-- ① rule -->
+  <section id="p-rule" class="stage">
+    <div class="panel">
+      <h2>ボタンの きまり</h2>
+      <div class="rules">
+        <div class="rule"><span class="sym k-up">▲</span><div><b>うえに 2ます</b><span class="arr">↑↑</span></div></div>
+        <div class="rule"><span class="sym k-down">●</span><div><b>したに 1ます</b><span class="arr">↓</span></div></div>
+        <div class="rule"><span class="sym k-left">◆</span><div><b>ひだりに 2ます</b><span class="arr">←←</span></div></div>
+        <div class="rule"><span class="sym k-right">★</span><div><b>みぎに 3ます</b><span class="arr">→→→</span></div></div>
+      </div>
+      <h2>やっては いけない こと</h2>
+      <div class="bans">
+        <div class="ban"><span class="x">×</span><p><b>ますの そとに でちゃう</b> ボタンは エラー。🚗は まったく うごきません。</p></div>
+        <div class="ban"><span class="x">×</span><p><b>いちど とおった ます</b>は、もう とおれません。とおろうと すると エラー。</p></div>
+      </div>
+      <h2>おてほんを みよう</h2>
+      <div class="demo-list">
+        <button class="demo-btn" data-demo="0"><span class="n">1</span><span>★を おすと？ <span class="muted">（そとに でちゃう）</span></span></button>
+        <button class="demo-btn" data-demo="1"><span class="n">2</span><span><span class="seq">◆→▲→★→●</span> で 🏠へ <span class="muted">（うまく いく）</span></span></button>
+        <button class="demo-btn" data-demo="2"><span class="n">3</span><span><span class="seq">▲→◆→●→★</span> で 🏠へ <span class="muted">（とおった ますを また とおる）</span></span></button>
+      </div>
+    </div>
+    <div class="panel board-box">
+      <svg class="board" id="b-rule" aria-label="ますめ"></svg>
+      <div class="say" id="say-rule" aria-live="polite" style="width:100%">おてほんの ボタンを おすか、したの ボタンで ためしてみよう。</div>
+      <div class="pad" id="pad-rule"></div>
+      <div class="row"><button class="btn" id="rule-undo">1つ もどす</button><button class="btn" id="rule-reset">はじめから</button></div>
+    </div>
+  </section>
+  <!-- ② free -->
+  <section id="p-free" class="stage" hidden>
+    <div class="panel board-box">
+      <svg class="board" id="b-free" aria-label="ますめ"></svg>
+      <div class="pad" id="pad-free"></div>
+      <div class="row"><button class="btn" id="free-undo">1つ もどす</button><button class="btn" id="free-reset">はじめから</button></div>
+    </div>
+    <div class="panel">
+      <h2>すきな ように おしてみよう</h2>
+      <p>とおった ますは きいろに なるよ。きいろの ますは もう とおれない。どこまで ながく すすめるかな？</p>
+      <div class="say" id="say-free" aria-live="polite">ボタンを おしてね。</div>
+      <h3>おした ボタン</h3>
+      <div class="chips" id="free-hist"></div>
+      <p class="muted" id="free-count"></p>
+    </div>
+  </section>
+  <!-- ③ quiz -->
+  <section id="p-quiz" hidden>
+    <div class="stage">
+      <div class="panel board-box">
+        <div class="qtabs" role="tablist" style="align-self:flex-start">
+          <button class="qtab" data-q="1" aria-selected="true">(1) おせる ボタン</button>
+          <button class="qtab" data-q="2" aria-selected="false">(2) どこに とまる</button>
+          <button class="qtab" data-q="3" aria-selected="false">(3) 7かいで 🏠</button>
+        </div>
+        <svg class="board" id="b-quiz" aria-label="ますめ"></svg>
+        <div class="pad" id="pad-quiz"></div>
+      </div>
+      <div class="panel">
+        <h2 id="q-title"></h2>
+        <p id="q-text"></p>
+        <div class="chips" id="q-chips"></div>
+        <div class="say" id="say-quiz" aria-live="polite"></div>
+        <div class="row" id="q-actions"></div>
+        <div class="legend" id="q-legend"></div>
+      </div>
+    </div>
+  </section>
+</div>
+<div id="hana" hidden>
+  <svg viewBox="0 0 300 300" aria-hidden="true">
+    <path class="ring" d="M150 40 C 230 40 265 110 250 170 C 235 240 150 270 90 240 C 30 205 35 110 90 70 C 140 35 215 70 220 140 C 225 200 165 225 125 200 C 90 178 100 125 140 118"/>
+    <text x="150" y="290">よくできました</text>
+  </svg>
+</div>
+
+  <script src="game.js"></script>
+</body>
+</html>
