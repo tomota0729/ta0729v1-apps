@@ -50,19 +50,9 @@ function tryMove(rows,cols,pos,visited,key){
   }
   return{ok:true,path,end:[r,c]};
 }
-function simulate(rows,cols,start,seq){
-  const visited=new Set([K(...start)]);let pos=start;const trail=[start];
-  for(let i=0;i<seq.length;i++){
-    const res=tryMove(rows,cols,pos,visited,seq[i]);
-    if(!res.ok)return{ok:false,at:i,reason:res.reason,trail};
-    for(const p of res.path){visited.add(K(...p));trail.push(p)}
-    pos=res.end;
-  }
-  return{ok:true,end:pos,trail,visited};
-}
 
 class Board{
-  constructor(svg,opts={}){this.svg=svg;this.onCell=opts.onCell||null;this.onChange=opts.onChange||null;this.busy=false}
+  constructor(svg,opts={}){this.svg=svg;this.onChange=opts.onChange||null;this.busy=false}
   setup({rows,cols,start,home=null,items=[]}){
     Object.assign(this,{rows,cols,start,home,items});this.build();this.reset();
   }
@@ -71,8 +61,7 @@ class Board{
     svg.setAttribute('viewBox',`${-m} ${-m} ${this.cols*S+2*m} ${this.rows*S+2*m}`);
     const gC=el('g',{},svg);this.rects=[];
     for(let r=0;r<this.rows;r++){this.rects.push([]);for(let c=0;c<this.cols;c++){
-      const rc=el('rect',{x:c*S,y:r*S,width:S,height:S,class:'cell'+(this.onCell?' clickable':'')},gC);
-      if(this.onCell)rc.addEventListener('click',()=>this.onCell(r,c));
+      const rc=el('rect',{x:c*S,y:r*S,width:S,height:S,class:'cell'},gC);
       this.rects[r].push(rc);
     }}
     el('rect',{x:0,y:0,width:this.cols*S,height:this.rows*S,class:'frame'},svg);
@@ -133,34 +122,18 @@ class Board{
   }
   clearErr(){this.gErr&&(this.gErr.innerHTML='')}
   clearMarks(){this.gMarks&&(this.gMarks.innerHTML='')}
-  mark(r,c,cls){const [x,y]=this.center(r,c);el('circle',{cx:x,cy:y,r:CELL*.4,class:cls},this.gMarks)}
-  ghost(key,res){
-    const color=`var(${BTN[key].col})`;
-    const pts=[this.pos,...res.path];if(!res.ok)pts.push(res.bad);
-    const cs=pts.map(p=>this.center(...p));
-    if(!res.ok){const l=cs[cs.length-1];l[0]=Math.max(-CELL*.3,Math.min(this.cols*CELL+CELL*.3,l[0]));l[1]=Math.max(-CELL*.3,Math.min(this.rows*CELL+CELL*.3,l[1]))}
-    el('polyline',{points:cs.map(p=>p.join(',')).join(' '),class:'ghost'+(res.ok?'':' ng'),style:`stroke:${color}`},this.gMarks);
-    const [x,y]=cs[cs.length-1];
-    if(res.ok){el('circle',{cx:x,cy:y,r:17,class:'ghost-end',style:`fill:${color}`},this.gMarks);const t=el('text',{x,y,class:'ghost-lbl'},this.gMarks);t.textContent=BTN[key].sym}
-    else{const t=el('text',{x,y,class:'err-x'},this.gMarks);t.textContent='×'}
-  }
 }
 
-function makePad(box,onPress,toggle){
-  box.innerHTML='';box.classList.toggle('toggle',!!toggle);const map={};
+function makePad(box,onPress){
+  box.innerHTML='';
   for(const k of ORDER){
     const b=document.createElement('button');b.className='pad-btn '+BTN[k].cls;
-    b.innerHTML=`<span class="s">${BTN[k].sym}</span><span class="l">${BTN[k].label}</span>`+(toggle?'<span class="res"></span>':'');
+    b.innerHTML=`<span class="s">${BTN[k].sym}</span><span class="l">${BTN[k].label}</span>`;
     b.setAttribute('aria-label',BTN[k].sym+' '+BTN[k].label);
-    if(toggle)b.setAttribute('aria-pressed','false');
-    b.addEventListener('click',()=>onPress(k,b));box.appendChild(b);map[k]=b;
+    b.addEventListener('click',()=>onPress(k));box.appendChild(b);
   }
-  return map;
 }
 function chip(k){const s=document.createElement('span');s.className='chip '+BTN[k].cls;s.textContent=BTN[k].sym;return s}
-function chipsInto(box,seq,arrows){
-  box.innerHTML='';seq.forEach((k,i)=>{if(i&&arrows){const a=document.createElement('span');a.className='arrow';a.textContent='→';box.appendChild(a)}box.appendChild(chip(k))});
-}
 function say(id,text,tone){const e=$(id);e.textContent=text;e.className='say'+(tone?' '+tone:'')}
 
 /* はなまる */
@@ -171,144 +144,15 @@ function hanamaru(){
   setTimeout(()=>h.classList.add('out'),1900);setTimeout(()=>{h.hidden=true;h.className=''},2500);
 }
 
-/* タブ */
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t?'true':'false'));
-  ['rule','free','quiz'].forEach(n=>$('p-'+n).hidden=n!==t.dataset.tab);
-}));
-
-/* ① きまり */
-const bRule=new Board($('b-rule'));
-bRule.setup({rows:6,cols:6,start:[4,3],home:[3,4]});
-let demoRunning=false;
-makePad($('pad-rule'),async k=>{
-  if(demoRunning)return;
-  const r=await bRule.press(k);if(!r)return;
-  if(r.ok){say('say-rule',`${BTN[k].sym} は ${BTN[k].label} すすむよ。`+(bRule.home&&K(...bRule.pos)===K(...bRule.home)?' 🏠に ついた！':''))}
-  else say('say-rule',REASON[r.reason],'ng');
-});
-$('rule-undo').onclick=()=>{if(!demoRunning){bRule.undo();say('say-rule','1つ もどしたよ。')}};
-$('rule-reset').onclick=()=>{if(!demoRunning){bRule.reset();say('say-rule','はじめに もどしたよ。')}};
-const DEMOS=[
-  {seq:['right'],intro:'🚗は みぎから 3ばんめの ますに いるよ。★で みぎに 3ます すすめるかな？',end:''},
-  {seq:['left','up','right','down'],intro:'◆→▲→★→● の じゅんに おしてみるよ。',end:'🏠に ついた！ どの ますも 1かいしか とおって いないから だいじょうぶ。'},
-  {seq:['up','left','down','right'],intro:'こんどは ▲→◆→●→★ の じゅんに おしてみるよ。',end:''}
-];
-document.querySelectorAll('.demo-btn').forEach(btn=>btn.addEventListener('click',async()=>{
-  if(demoRunning||bRule.busy)return;demoRunning=true;
-  const d=DEMOS[+btn.dataset.demo];bRule.reset();say('say-rule',d.intro);await sleep(RM?300:1300);
-  for(const k of d.seq){
-    say('say-rule',`${BTN[k].sym} を おすと…… ${BTN[k].label}`);await sleep(RM?200:700);
-    const r=await bRule.press(k);
-    if(!r.ok){
-      say('say-rule',REASON[r.reason]+(r.reason==='visited'?' ×の ますは さっき とおった ますだね。':' ますは みぎに 2つしか ないね。'),'ng');
-      demoRunning=false;return;
-    }
-    await sleep(RM?100:450);
-  }
-  say('say-rule',d.end,'ok');demoRunning=false;
-}));
-
-/* ② じゆう */
-const bFree=new Board($('b-free'),{onChange:()=>{
-  chipsInto($('free-hist'),bFree.hist.map(h=>h.key),true);
-  $('free-count').textContent=`とおった ます：${bFree.trail.length} こ　／　おした かず：${bFree.hist.length} かい`;
-}});
-bFree.setup({rows:6,cols:6,start:[3,2]});
-makePad($('pad-free'),async k=>{
-  const r=await bFree.press(k);if(!r)return;
-  if(r.ok)say('say-free',`${BTN[k].sym}：${BTN[k].label} すすんだよ。`);
-  else{
-    // どのボタンも押せないか
-    const any=ORDER.some(x=>tryMove(6,6,bFree.pos,bFree.visitedSet(),x).ok);
-    say('say-free',REASON[r.reason]+(any?'':' もう どの ボタンも おせないね。「1つ もどす」か「はじめから」で やりなおそう。'),'ng');
-  }
-});
-$('free-undo').onclick=()=>{bFree.undo();say('say-free','1つ もどしたよ。')};
-$('free-reset').onclick=()=>{bFree.reset();say('say-free','はじめに もどしたよ。')};
-
-/* ③ もんだい */
+/* もんだい */
 function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const ri=(rng,n)=>Math.floor(rng()*n);
 const N=6;
-let qType=1,Q={},first={1:true,2:true,3:true};
-const bQuiz=new Board($('b-quiz'),{onCell:(r,c)=>{if(qType===2)pickCell(r,c)}});
+let Q={},firstQ=true;
+const bQuiz=new Board($('b-quiz'));
 function actions(list){const box=$('q-actions');box.innerHTML='';const out={};list.forEach(([id,label,fn,primary])=>{const b=document.createElement('button');b.className='btn'+(primary?' primary':'');b.textContent=label;b.onclick=fn;box.appendChild(b);out[id]=b});return out}
 
-/* (1) おせる ボタンを ぜんぶ えらぶ */
-function newQ1(){
-  let pos,ans;
-  if(first[1]){pos=[1,2];first[1]=false}
-  else do{pos=[ri(Math.random,N),ri(Math.random,N)];ans=ORDER.filter(k=>tryMove(N,N,pos,new Set([K(...pos)]),k).ok)}while(ans.length<1||ans.length>3);
-  ans=ORDER.filter(k=>tryMove(N,N,pos,new Set([K(...pos)]),k).ok);
-  Q={pos,ans,sel:new Set(),done:false};
-  bQuiz.setup({rows:N,cols:N,start:pos});
-  $('q-title').textContent='(1) おせる ボタンは どれ？';
-  $('q-text').textContent='🚗が いま いる ところで、おせる ボタンを ぜんぶ えらんでね。（そとに でちゃう ボタンは おせないよ）';
-  $('q-chips').innerHTML='';$('q-legend').textContent='';
-  const pad=makePad($('pad-quiz'),(k,b)=>{
-    if(Q.done)return;
-    Q.sel.has(k)?Q.sel.delete(k):Q.sel.add(k);b.setAttribute('aria-pressed',Q.sel.has(k)?'true':'false');
-    Q.acts.check.disabled=Q.sel.size===0;
-  },true);
-  Q.pad=pad;
-  say('say-quiz','ボタンを おすと えらべるよ。もう いちど おすと やめられるよ。');
-  Q.acts=actions([['check','こたえあわせ',checkQ1,true],['next','つぎの もんだい',newQ1]]);
-  Q.acts.check.disabled=true;
-}
-function checkQ1(){
-  if(Q.done)return;Q.done=true;Q.acts.check.disabled=true;
-  const ok=Q.ans.length===Q.sel.size&&Q.ans.every(k=>Q.sel.has(k));
-  for(const k of ORDER){
-    const res=tryMove(N,N,Q.pos,new Set([K(...Q.pos)]),k);bQuiz.ghost(k,res);
-    const b=Q.pad[k];b.style.opacity=1;b.querySelector('.res').textContent=res.ok?'○':'×';
-  }
-  $('q-legend').textContent='せん：それぞれの ボタンで すすむ みち　×：そとに でちゃう';
-  if(ok){say('say-quiz','せいかい！ おせる ボタンは '+Q.ans.map(k=>BTN[k].sym).join(' と ')+' だね。','ok');hanamaru()}
-  else say('say-quiz','ざんねん。こたえは '+Q.ans.map(k=>BTN[k].sym).join(' と ')+'。ボードの せんを みて、どの ボタンが そとに でちゃうか たしかめよう。','ng');
-}
-
-/* (2) どこに とまる？ */
-function newQ2(){
-  let start,seq,sim;
-  if(first[2]){start=[2,2];seq=['down','right','up','left'];first[2]=false;sim=simulate(N,N,start,seq)}
-  else for(;;){
-    start=[ri(Math.random,N),ri(Math.random,N)];seq=Array.from({length:4},()=>ORDER[ri(Math.random,4)]);
-    sim=simulate(N,N,start,seq);if(sim.ok&&K(...sim.end)!==K(...start))break;
-  }
-  Q={start,seq,end:sim.end,pick:null,done:false};
-  bQuiz.setup({rows:N,cols:N,start});
-  $('q-title').textContent='(2) 🚗は どこに とまる？';
-  $('q-text').textContent='したの じゅんばんに ボタンを おすと、🚗は さいごに どの ますに とまるかな？ とまる ますを タップしてね。';
-  chipsInto($('q-chips'),seq,true);$('q-legend').textContent='';
-  $('pad-quiz').innerHTML='';
-  say('say-quiz','あたまの なかで 🚗を うごかしてみよう。ゆびで なぞっても いいよ。');
-  Q.acts=actions([['check','こたえあわせ',checkQ2,true],['replay','もういちど みる',replayQ2],['next','つぎの もんだい',newQ2]]);
-  Q.acts.check.disabled=true;Q.acts.replay.disabled=true;
-}
-function pickCell(r,c){
-  if(Q.done||bQuiz.busy)return;Q.pick=[r,c];bQuiz.clearMarks();bQuiz.mark(r,c,'pick');Q.acts.check.disabled=false;
-  say('say-quiz','ここで いい？ よければ「こたえあわせ」を おしてね。');
-}
-async function playSeq(seq){
-  bQuiz.reset();if(Q.pick)bQuiz.mark(...Q.pick,'pick');
-  for(const k of seq){await bQuiz.press(k);await sleep(RM?50:250)}
-}
-async function checkQ2(){
-  if(Q.done)return;Q.done=true;Q.acts.check.disabled=true;Q.acts.next.disabled=true;
-  say('say-quiz','🚗を うごかして たしかめるよ……');
-  await playSeq(Q.seq);
-  Q.acts.next.disabled=false;Q.acts.replay.disabled=false;
-  if(K(...Q.pick)===K(...Q.end)){say('say-quiz','せいかい！ ぴったり とまったね。','ok');hanamaru()}
-  else{bQuiz.mark(...Q.end,'right-mark');say('say-quiz','ざんねん。🚗が とまった ますが こたえだよ。ボタンを 1つずつ たしかめてみよう。','ng')}
-  $('q-legend').textContent='あおい まる：あなたの こたえ　みどりの てんせん：こたえ';
-}
-async function replayQ2(){
-  if(bQuiz.busy)return;Q.acts.replay.disabled=true;await playSeq(Q.seq);
-  if(K(...Q.pick)!==K(...Q.end))bQuiz.mark(...Q.end,'right-mark');Q.acts.replay.disabled=false;
-}
-
-/* (3) 7かいで 🍎を 2つ とおって 🏠へ */
+/* 7かいで 🍎を 2つ とおって 🏠へ */
 function solve3(start,home,items,limit=40){
   const sols=[];const seq=[];const vis=new Set([K(...start)]);
   (function dfs(pos){
@@ -342,12 +186,10 @@ function gen3(rng){
   return best;
 }
 function newQ3(){
-  const p=gen3(first[3]?mulberry(20260927):Math.random);first[3]=false;
+  const p=gen3(firstQ?mulberry(20260927):Math.random);firstQ=false;
   Q={...p,done:false};
   bQuiz.setup({rows:N,cols:N,start:p.start,home:p.home,items:p.items});
-  $('q-title').textContent='(3) 7かいで 🏠に ぴったり とまろう';
-  $('q-text').textContent='🍎を 2つとも とおって、ボタンを ちょうど 7かい おしたときに 🏠で とまるように しよう。';
-  $('q-legend').textContent='';
+  $('q-title').textContent='🍎を 2つ とおって、7かいで 🏠に ぴったり とまろう';
   makePad($('pad-quiz'),press3);
   say('say-quiz','ボタンを おすと 🚗が うごくよ。まちがえたら「1つ もどす」。');
   Q.acts=actions([['undo','1つ もどす',()=>{if(!Q.done)bQuiz.undo()}],['reset','はじめから',()=>{Q.done=false;bQuiz.reset();say('say-quiz','はじめに もどしたよ。')}],['ans','こたえを みる',showAns3],['next','つぎの もんだい',newQ3,true]]);
@@ -356,7 +198,7 @@ function slots3(){
   const box=$('q-chips');box.innerHTML='';
   for(let i=0;i<7;i++){const h=bQuiz.hist[i];if(h)box.appendChild(chip(h.key));else{const s=document.createElement('span');s.className='slot';s.textContent=i+1;box.appendChild(s)}}
 }
-bQuiz.onChange=()=>{if(qType===3)slots3()};
+bQuiz.onChange=slots3;
 async function press3(k){
   if(Q.done||bQuiz.busy)return;
   if(bQuiz.hist.length>=7){say('say-quiz','もう 7かい おしたよ。「1つ もどす」か「はじめから」で やりなおそう。','ng');return}
@@ -376,10 +218,4 @@ async function showAns3(){
   say('say-quiz','こたえの ひとつ： '+sol.map(k=>BTN[k].sym).join(' → ')+(Q.sols.length>1?`（ほかにも ${Q.sols.length-1}つ あるよ）`:''),'ok');
 }
 
-const QS={1:newQ1,2:newQ2,3:newQ3};
-document.querySelectorAll('.qtab').forEach(t=>t.addEventListener('click',()=>{
-  if(bQuiz.busy)return;
-  document.querySelectorAll('.qtab').forEach(x=>x.setAttribute('aria-selected',x===t?'true':'false'));
-  qType=+t.dataset.q;QS[qType]();
-}));
-newQ1();
+newQ3();
