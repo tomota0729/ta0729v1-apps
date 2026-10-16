@@ -1,7 +1,6 @@
-/* 赤門クイズ 共通 - quiz.css（ランダム テストの 問題画面） */
+/* 赤門クイズ 共通 - quiz.css（さいころ・てんかいず アプリの 問題画面） */
 .prog{align-self:stretch;display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
 .prog b{color:var(--ink)}
-.intro{align-self:stretch;margin:0;font-size:15px;color:var(--muted);line-height:1.6}
 .stem{align-self:stretch;margin:0;font-size:21px;font-weight:700;line-height:1.7;text-align:left}
 .fig{width:100%;display:flex;align-items:center;justify-content:center;min-height:110px}
 .fig svg{width:100%;height:auto;max-height:320px}
@@ -11,37 +10,48 @@
 .choice{font:inherit;font-size:22px;font-weight:600;min-width:120px;border:3px solid var(--line);background:var(--paper);color:var(--ink);
   border-radius:16px;padding:10px 14px;cursor:pointer;box-shadow:0 3px 0 rgba(28,43,69,.2)}
 .choice:active{transform:translateY(2px)}
-.choice .no{color:var(--muted);margin-right:6px}
-.choice.picked{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--paper))}
 .choice.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--paper))}
 .choice.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 12%,var(--paper))}
 .choice[disabled]{cursor:default}
 
-/* 表紙・けっか（#qview の かわりに #other に でる） */
+/* けっか（#qview の かわりに #other に でる） */
 #qview,#other{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;min-height:0}
 #other{justify-content:center}
 .cover{align-self:stretch;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
-.cover .big{font-size:28px;font-weight:700}
 .cover .note{font-size:14px;color:var(--muted)}
-.result{align-self:stretch;overflow-y:auto;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
 .score-big{font-size:34px;font-weight:700;text-align:center}
 .stars{font-size:44px;text-align:center;letter-spacing:.1em}
-.bar{display:inline-block;vertical-align:middle;width:120px;height:10px;margin-left:10px;border-radius:99px;background:var(--line);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
 
-/* ランダム テスト：もんだいの かずを えらぶ */
-.pick-n{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
-.pick-n button{font:inherit;font-size:24px;font-weight:700;width:130px;padding:18px 0;border-radius:20px;border:3px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;box-shadow:0 4px 0 rgba(28,43,69,.2)}
-.pick-n button:active{transform:translateY(3px)}
-.pick-n button small{display:block;font-size:14px;color:var(--muted);font-weight:500}
-.dai-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:16px}
-.dai-row .t{min-width:5.5em;font-weight:700}
-.mk{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font-weight:700;color:#fff}
-.mk.o{background:var(--ok)} .mk.x{background:var(--ng)} .mk.n{background:var(--grid)}
-.miss{border:2px solid var(--line);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.6}
-.miss .h{font-weight:700}
-.miss .fig{min-height:0}
-.miss .fig svg{max-height:150px}
+/* さいころ・てんかいず */
+.numpad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;width:100%;max-width:560px}
+.numpad button{font:inherit;font-size:30px;font-weight:700;padding:10px 0;border-radius:16px;border:3px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;box-shadow:0 3px 0 rgba(28,43,69,.2)}
+.numpad button:active{transform:translateY(2px)}
+.numpad button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--paper))}
+.numpad button.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 12%,var(--paper))}
+.numpad button[disabled]{cursor:default}
+.netopts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;height:100%}
+.netopt{font:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:16px;border:3px solid var(--line);background:var(--paper);cursor:pointer;min-height:0}
+.netopt .lb{font-size:22px;font-weight:700}
+.netopt svg{width:100%;height:100%;min-height:0;flex:1}
+.netopt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--paper))}
+.netopt.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 10%,var(--paper))}
+@media (orientation:portrait){   /* たて画面では 3つを たてに ならべて 大きく */
+  .netopts{grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr))}
+  .netopt{flex-direction:row}
+  .netopt .lb{width:2em}
+}
+.fig:has(.fold-wrap){flex-direction:column;gap:6px}
+.fold-wrap{width:100%;flex:1;min-height:240px;perspective:1000px;display:flex;align-items:center;justify-content:center}
+.replay{font-size:15px;padding:4px 12px}
+/* くみたてた あと、いろいろな むきに クルクル（さいごが さいしょと おなじ むきに なるので つぎめなく くりかえす） */
+@keyframes cube-spin{   /* --tx --ty --tz（まん中へ）・--k（大きさ）は cube.js が きめる */
+  0%{transform:translate3d(var(--tx),var(--ty),var(--tz)) scale(var(--k)) rotateX(-28deg) rotateY(-35deg) rotateZ(0deg)}
+  33%{transform:translate3d(var(--tx),var(--ty),var(--tz)) scale(var(--k)) rotateX(92deg) rotateY(85deg) rotateZ(60deg)}
+  66%{transform:translate3d(var(--tx),var(--ty),var(--tz)) scale(var(--k)) rotateX(212deg) rotateY(205deg) rotateZ(240deg)}
+  100%{transform:translate3d(var(--tx),var(--ty),var(--tz)) scale(var(--k)) rotateX(332deg) rotateY(325deg) rotateZ(360deg)}
+}
+.fold-scene.spin{animation:cube-spin 12s linear infinite}
+@media (prefers-reduced-motion: reduce){.fold-scene.spin{animation:none}}
 
 @media (min-width:600px) and (min-height:600px){
   .fig.grow svg{height:100%;max-height:none}

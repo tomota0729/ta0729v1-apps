@@ -47,12 +47,28 @@ let score=0;
 function ensureHana(){
   if($('hana'))return;
   const d=document.createElement('div');d.id='hana';d.hidden=true;
-  d.innerHTML='<svg viewBox="0 0 300 300" aria-hidden="true"><path class="ring" d="M150 40 C 230 40 265 110 250 170 C 235 240 150 270 90 240 C 30 205 35 110 90 70 C 140 35 215 70 220 140 C 225 200 165 225 125 200 C 90 178 100 125 140 118"/><text x="150" y="290">よくできました</text></svg>';
+  // ふつうの 赤い まる（さっと かいて、すぐ きえる）
+  d.innerHTML='<svg viewBox="0 0 300 300" aria-hidden="true"><circle class="ring" cx="150" cy="150" r="110"/></svg>';
   document.body.appendChild(d);
 }
+// まちがいの ばつ（さっと かいて、すぐ きえる）
+let batsuTimers=[];
+function batsu(){
+  let d=$('batsu');
+  if(!d){
+    d=document.createElement('div');d.id='batsu';d.hidden=true;
+    d.innerHTML='<svg viewBox="0 0 300 300" aria-hidden="true"><path class="b1" d="M70 70 L230 230"/><path class="b2" d="M230 70 L70 230"/></svg>';
+    document.body.appendChild(d);
+  }
+  batsuTimers.forEach(clearTimeout);
+  d.hidden=false;d.className='';d.getBoundingClientRect();d.className='on';
+  batsuTimers=[setTimeout(()=>d.classList.add('out'),700),setTimeout(()=>{d.hidden=true;d.className=''},1000)];
+}
+let hanaTimers=[];
 function hanamaru(){
   ensureHana();
   score++;if($('score'))$('score').textContent=score;Sound.finish();
+  hanaTimers.forEach(clearTimeout);
   const h=$('hana');h.hidden=false;h.className='';h.getBoundingClientRect();h.className='on';
-  setTimeout(()=>h.classList.add('out'),1900);setTimeout(()=>{h.hidden=true;h.className=''},2500);
+  hanaTimers=[setTimeout(()=>h.classList.add('out'),700),setTimeout(()=>{h.hidden=true;h.className=''},1000)];
 }

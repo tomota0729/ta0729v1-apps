@@ -76,7 +76,7 @@ function answer(i){
   const how=`${Q.step}ずつ ${Q.dir>0?'ふえて':'へって'} いるね。`;
   renderSeq({ok:c.ok});
   if(c.ok){say('say-quiz',`せいかい！ ${how}`,'ok');hanamaru()}
-  else{c.el.classList.add('wrong');Sound.wrong();say('say-quiz',`ざんねん。${how} こたえは ${MARK[Q.choices.findIndex(x=>x.ok)]}の ${Q.seq[Q.blanks[0]]} と ${Q.seq[Q.blanks[1]]}。`,'ng')}
+  else{c.el.classList.add('wrong');Sound.wrong();batsu();say('say-quiz',`ざんねん。${how} こたえは ${MARK[Q.choices.findIndex(x=>x.ok)]}の ${Q.seq[Q.blanks[0]]} と ${Q.seq[Q.blanks[1]]}。`,'ng')}
 }
 
 newQ();

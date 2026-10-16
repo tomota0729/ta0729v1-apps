@@ -38,8 +38,8 @@
     <p class="subtitle">あそびながら もんだいを といてみよう</p>
   </header>
 
-  <h2 class="subject">🏁 ぜんこく とういつ テスト（1ねんせい さんすう）</h2>
-  <main class="app-grid" id="grid-test"></main>
+  <h2 class="subject">🎲 さいころ・てんかいず</h2>
+  <main class="app-grid" id="grid-saikoro"></main>
   <h2 class="subject">🔢 さんすう</h2>
   <main class="app-grid" id="grid-sansu"></main>
   <h2 class="subject">📖 こくご</h2>
@@ -47,15 +47,31 @@
 
   <script>
     // 赤門クイズの なかの もんだい（ふえたら ここに ついか）
-    // subject: 'test'（ぜんこく とういつ テスト） / 'sansu'（さんすう） / 'kokugo'（こくご）
+    // subject: 'saikoro'（さいころ・てんかいず） / 'sansu'（さんすう） / 'kokugo'（こくご）
     const QUIZZES = [
       {
-        subject: 'test',
-        name: 'ランダム テスト',
+        subject: 'saikoro',
+        name: 'てんかいず 3たく',
+        emoji: '📦',
+        url: 'tenkai/',
+        color: '#E26A9A',
+        description: 'はこに なる てんかいずは どれ？'
+      },
+      {
+        subject: 'saikoro',
+        name: 'さいころの かくれた め',
         emoji: '🎲',
-        url: 'random/',
-        color: '#8E44AD',
-        description: '5・10・20もん いろいろ まぜこぜ'
+        url: 'saikoro/',
+        color: '#2F6FDB',
+        description: 'むかいあう めんを たすと 7'
+      },
+      {
+        subject: 'saikoro',
+        name: 'てんかいずの あいた ます',
+        emoji: '🔲',
+        url: 'akimasu/',
+        color: '#15935A',
+        description: '？に はいる 数を こたえよう'
       },
       {
         subject: 'sansu',
@@ -83,7 +99,7 @@
       }
     ];
 
-    ['test', 'sansu', 'kokugo'].forEach(sub => {
+    ['saikoro', 'sansu', 'kokugo'].forEach(sub => {
       const grid = document.getElementById('grid-' + sub);
       const list = QUIZZES.filter(q => q.subject === sub);
       if (!list.length) {

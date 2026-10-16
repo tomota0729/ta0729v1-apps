@@ -86,7 +86,7 @@ function answer(i){
   Q.opts.forEach(x=>{x.el.disabled=true;if(x.ok)x.el.classList.add('right')});
   const hole=$('hole');hole.innerHTML=Q.opts.find(x=>x.ok).t;hole.classList.add('ok');
   if(o.ok){say('say-quiz','せいかい！ '+Q.why,'ok');hanamaru()}
-  else{o.el.classList.add('wrong');Sound.wrong();say('say-quiz',`ざんねん。こたえは ${MARK[Q.opts.findIndex(x=>x.ok)]}。${Q.why}`,'ng')}
+  else{o.el.classList.add('wrong');Sound.wrong();batsu();say('say-quiz',`ざんねん。こたえは ${MARK[Q.opts.findIndex(x=>x.ok)]}。${Q.why}`,'ng')}
 }
 
 newQ();

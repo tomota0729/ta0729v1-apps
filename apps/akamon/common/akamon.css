@@ -39,17 +39,22 @@ h2{font-size:18px;margin:0;font-weight:700;text-align:center}
 .btn.primary{background:var(--ink);color:var(--paper)}
 .btn[disabled]{opacity:.4;cursor:default}
 
-/* はなまる */
+/* せいかいの まる（ふつうの 赤い まる。0.3びょうで かいて、1びょうで きえる） */
 #hana{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:10}
-#hana svg{width:min(60vw,300px);height:auto}
-#hana .ring{fill:none;stroke:#E23B4A;stroke-width:10;stroke-linecap:round;stroke-dasharray:1200;stroke-dashoffset:1200}
-#hana.on .ring{animation:draw 1s ease-out forwards}
-#hana text{fill:#E23B4A;font-family:"Klee One",sans-serif;font-size:40px;text-anchor:middle;opacity:0}
-#hana.on text{animation:fade 1.6s .5s forwards}
-#hana.out{transition:opacity .5s;opacity:0}
+#hana svg{width:min(50vw,260px);height:auto}
+#hana .ring{fill:none;stroke:#E23B4A;stroke-width:16;stroke-linecap:round;stroke-dasharray:700;stroke-dashoffset:700;transform:rotate(-90deg);transform-origin:center}
+#hana.on .ring{animation:draw .3s ease-out forwards}
+#hana.out{transition:opacity .3s;opacity:0}
 @keyframes draw{to{stroke-dashoffset:0}}
-@keyframes fade{0%{opacity:0}30%{opacity:1}100%{opacity:1}}
-@media (prefers-reduced-motion: reduce){#hana.on .ring{animation:none;stroke-dashoffset:0}#hana.on text{animation:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){#hana.on .ring{animation:none;stroke-dashoffset:0}}
+/* まちがいの ばつ（あおい ×。2ほんの せんを じゅんに かいて、1びょうで きえる） */
+#batsu{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:10}
+#batsu svg{width:min(45vw,230px);height:auto}
+#batsu path{fill:none;stroke:#2F5FC4;stroke-width:22;stroke-linecap:round;stroke-dasharray:230;stroke-dashoffset:230}
+#batsu.on .b1{animation:draw .18s ease-out forwards}
+#batsu.on .b2{animation:draw .18s ease-out .15s forwards}
+#batsu.out{transition:opacity .3s;opacity:0}
+@media (prefers-reduced-motion: reduce){#batsu.on path{animation:none;stroke-dashoffset:0}}
 
 /* iPad・パソコン：スクロールなしで1画面に収める。
    .grow を つけた ようそ（ボードなど）が のこりの たかさに あわせて ちぢむ */
