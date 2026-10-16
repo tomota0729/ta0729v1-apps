@@ -24,8 +24,12 @@ function showFold(cells, bad) {
   }
 }
 
+// 5もんぶんの てんかいず（上下1こずつ／ほか の バランスを cube.js の netPlan で きめる）
+let plan;
+
 MQ.run({total: 5, autoNext: 16000, ask(n, done) {
-  const good = CUBE.randomNet();
+  if (n === 1) plan = CUBE.netPlan();
+  const good = CUBE.randomNet(plan.ids[n - 1]);
   const ex = new Set([CUBE.canon(good.cells)]);
   const bad1 = CUBE.randomBad(ex); ex.add(CUBE.canon(bad1));
   const bad2 = CUBE.randomBad(ex);
@@ -60,5 +64,5 @@ MQ.run({total: 5, autoNext: 16000, ask(n, done) {
     };
     $('opts').appendChild(b);
   });
-  say('say-quiz', 'あたまの なかで おりたたんで みよう。');
+  say('say-quiz', n === 1 && plan.hard ? 'きょうは むずかしい かい！ ぜんぶ「上下1こずつ」いがいの かたちだよ。' : 'あたまの なかで おりたたんで みよう。');
 }});

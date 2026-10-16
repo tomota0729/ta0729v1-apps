@@ -76,6 +76,17 @@ const CUBE = (() => {
   function randomNet(i = Math.floor(Math.random() * NETS.length)) {
     return {id: i, cells: transform(NETS[i], Math.floor(Math.random() * 4), Math.random() < 0.5)};
   }
+
+  // てんかいずの グループ：A 上下1こずつ（まん中に 4つ ならぶ）／ B ほか（2-3-1・2-2-2・3-3）
+  const GROUP_A = [0, 1, 2, 3, 4, 5], GROUP_B = [6, 7, 8, 9, 10];
+  // 5もんの くみあわせ（A の かず, B の かず）。10かいに 1かいは むずかしい「B だけ」
+  const NET_PATTERNS = [[4, 1], [1, 4], [3, 2], [3, 2], [3, 2], [2, 3], [2, 3], [2, 3], [4, 1], [0, 5]];
+  // 5もんぶんの てんかいずの ばんごう（おなじ グループの なかでは なるべく かさねない・じゅんばんも まぜる）
+  function netPlan() {
+    const [a, b] = NET_PATTERNS[Math.floor(Math.random() * NET_PATTERNS.length)];
+    const plan = [...shuffle(GROUP_A).slice(0, a), ...shuffle(GROUP_B).slice(0, b)];
+    return {ids: shuffle(plan), hard: a === 0};
+  }
   // くみたてられない 6マスの かたち（ランダム）
   function randomBad(exclude = new Set()) {
     for (let guard = 0; guard < 500; guard++) {
@@ -273,5 +284,5 @@ const CUBE = (() => {
     box.querySelector('.replay').onclick = () => { clearTimeout(timer); const back = f.fold(false); timer = setTimeout(run, back * 1000 + 300); };
   }
 
-  return {NETS, norm, transform, canon, roll, isCube, opposite, randomNet, randomBad, netSVG, dieSVG, fold3d, play, COLORS, PINK, PIPS};
+  return {NETS, GROUP_A, GROUP_B, netPlan, norm, transform, canon, roll, isCube, opposite, randomNet, randomBad, netSVG, dieSVG, fold3d, play, COLORS, PINK, PIPS};
 })();

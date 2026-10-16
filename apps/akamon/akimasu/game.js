@@ -4,8 +4,8 @@
 
 let net = null;   // {cells, face, num, shown, target}
 
-function newNet() {
-  const {cells} = CUBE.randomNet();
+function newNet(id) {
+  const {cells} = CUBE.randomNet(id);
   const {face} = CUBE.roll(cells);
   // めんの くみ (0,1)(2,3)(4,5) に、(1,6)(2,5)(3,4) を ランダムに わりあてる
   const pairs = shuffle([[1, 6], [2, 5], [3, 4]]).map(p => Math.random() < .5 ? p : [p[1], p[0]]);
@@ -36,8 +36,12 @@ function showFold(keepQ) {
       : 'さいころに なったね。おなじ いろの めんが むかいあって、たすと 7だよ。', keepQ ? 'ng' : 'ok'));
 }
 
+// 5もんぶんの てんかいず（上下1こずつ／ほか の バランスを cube.js の netPlan で きめる）
+let plan;
+
 MQ.run({total: 5, ask(n, done) {
-  net = newNet();
+  if (n === 1) plan = CUBE.netPlan();
+  net = newNet(plan.ids[n - 1]);
   const target = net.target;
   const partner = net.face.findIndex(f => f === CUBE.opposite(net.face[target]));
   const ans = net.num[target];
@@ -58,5 +62,5 @@ MQ.run({total: 5, ask(n, done) {
     };
     $('np').appendChild(b);
   }
-  if (n === 1) say('say-quiz', '「？」と むかいあう めんを さがそう。まっすぐ 3つ ならんだ とき、りょうはしが むかいあうよ。');
+  if (n === 1) say('say-quiz', plan.hard ? 'きょうは むずかしい かい！ ぜんぶ「上下1こずつ」いがいの かたちだよ。' : '「？」と むかいあう めんを さがそう。まっすぐ 3つ ならんだ とき、りょうはしが むかいあうよ。');
 }});
