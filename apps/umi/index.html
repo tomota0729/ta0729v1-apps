@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>うみの うちあい</title>
+  <link rel="stylesheet" href="style.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-header">
+    <button class="back-btn" onclick="location.href='../../'" aria-label="ホームへ もどる">🏠</button>
+    <span class="app-title">🚢 うみの うちあい</span>
+    <span class="turn" id="turn" hidden></span>
+  </div>
+
+  <!-- ① ならべる -->
+  <section class="screen active" id="screen-setup">
+    <p class="lead">じぶんの うみ<span class="small">（ふねは おまかせで おいたよ）</span></p>
+    <svg class="board setup-board" id="b-setup" viewBox="0 0 330 330" aria-label="じぶんの うみ"></svg>
+    <button class="btn" id="btn-reroll">🔄 おきなおす</button>
+    <p class="small">コンピューターの つよさ</p>
+    <div class="level-row" id="levelRow">
+      <button class="lv" data-lv="0">やさしい</button>
+      <button class="lv on" data-lv="1">ふつう</button>
+      <button class="lv" data-lv="2">つよい</button>
+    </div>
+    <button class="btn start" id="btn-start">スタート</button>
+  </section>
+
+  <!-- ② たいせん -->
+  <section class="screen" id="screen-battle">
+    <div class="block cpu-block" id="cpu-block">
+      <div class="block-head">
+        <span class="block-title">コンピューターの うみ</span>
+        <span class="small">ここに コンピューターの ふねが かくれて いるよ</span>
+      </div>
+      <svg class="board cpu-board" id="b-cpu" viewBox="0 0 330 330" aria-label="コンピューターの うみ"></svg>
+    </div>
+
+    <div class="legend">
+      <span><svg viewBox="0 0 30 30" id="ic-hit"></svg>あたり</span>
+      <span><svg viewBox="0 0 30 30" id="ic-miss"></svg>はずれ（しろい まるの すうじ ＝ まわり 8マスに ある ふねの かず）</span>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+
+    <div class="bottom">
+      <div class="block me-block" id="me-block">
+        <div class="block-head">
+          <span class="block-title">じぶんの うみ</span>
+          <span class="small">コンピューターが ねらって くるよ</span>
+        </div>
+        <svg class="board me-board" id="b-me" viewBox="0 0 330 330" aria-label="じぶんの うみ"></svg>
+      </div>
+      <div class="side">
+        <p class="small">コンピューターの ふね</p>
+        <div class="fleet" id="fleet-cpu"></div>
+        <p class="small">じぶんの ふね</p>
+        <div class="fleet" id="fleet-me"></div>
+        <p class="small">うった かず <b id="shots">0</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ おわり -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="result">
+      <p class="result-title" id="res-title"></p>
+      <p id="res-shots"></p>
+      <p id="res-hint"></p>
+      <button class="btn start" id="btn-again">もういちど</button>
+    </div>
+  </div>
+
+  <script src="game.js?v=1"></script>
+</body>
+</html>

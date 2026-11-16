@@ -88,6 +88,15 @@ const APPS = [
     enabled: true,
     color: '#D84315',
     description: 'もんだいをあそんでとこう'
+  },
+  {
+    id: 'umi',
+    name: 'うみの うちあい',
+    emoji: '🚢',
+    url: 'apps/umi/',
+    enabled: true,
+    color: '#185FA5',
+    description: 'ふねを さがして しずめよう'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります
