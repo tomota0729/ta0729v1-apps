@@ -593,7 +593,9 @@ if (typeof document !== 'undefined') (() => {
     } else {
       $('hint').hidden = true;
       const D = (CNT() + 1) * G - 0.55;
-      cam += G / SPEED_T[0] * dt * 1.2 * boostMul(dt);
+      // さいごの もんだいが おわったら ボスまで 自動で かそく
+      boostMul(dt);
+      cam += G / SPEED_T[0] * dt * 4;
       if (cam >= D) { cam = D; startBattle(); }
     }
   }
