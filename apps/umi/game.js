@@ -27,7 +27,7 @@ const UMI = (() => {
           for (let k = 0; k < len; k++) cells.push(v ? [r + k, c] : [r, c + k]);
           if (cells.every(([a, b]) => grid[a][b] < 0)) {
             cells.forEach(([a, b]) => (grid[a][b] = i));
-            ships.push({ len, r, c, v, cells, hits: 0, sunk: false });
+            ships.push({ len, r, c, v, cells, hits: 0, sunk: false, idx: i });
             placed = true;
           }
         }
@@ -216,6 +216,15 @@ if (typeof document !== 'undefined') (() => {
     };
   })();
 
+  /* ---- 画像（img/ に あれば つかう） ---- */
+  const IMG = {};
+  const SHIP_IMG = ['ship5', 'ship4', 'ship3a', 'ship3b', 'ship2'];
+  [...SHIP_IMG, 'fx_hit', 'fx_miss', 'sea_tile'].forEach(k => {
+    const im = new Image();
+    im.onload = () => { IMG[k] = 'img/' + k + '.png?v=1'; refreshImgs(); if (k === 'sea_tile') document.querySelectorAll('.board').forEach(b => b.classList.add('has-sea')); };
+    im.src = 'img/' + k + '.png?v=1';
+  });
+
   /* ---- SVG 部品 ---- */
   const at = (r, c) => [O + c * C + C / 2, O + r * C + C / 2];
   function el(tag, attrs, parent) {
@@ -235,13 +244,15 @@ if (typeof document !== 'undefined') (() => {
   function drawHit(g, x, y, anim, small) {
     const w = el('g', { class: anim ? 'pop' : '' }, g);
     const k = small ? 0.55 : 1;
+    if (IMG.fx_hit) { const sz = C * 1.25 * k; el('image', { href: IMG.fx_hit, x: x - sz / 2, y: y - sz / 2, width: sz, height: sz }, w); return w; }
     el('path', { d: star(x, y, 13 * k, 6 * k, 8), fill: '#E24B4A', stroke: '#A32D2D', 'stroke-width': 1 }, w);
     el('path', { d: star(x, y, 6 * k, 3 * k, 8), fill: '#FAC775' }, w);
     return w;
   }
   function drawMiss(g, x, y, n, anim) {
     const w = el('g', { class: anim ? 'pop' : '' }, g);
-    el('circle', { cx: x, cy: y, r: 11, fill: '#fff', stroke: '#378ADD', 'stroke-width': 2 }, w);
+    if (IMG.fx_miss) { const sz = C * 1.05; el('image', { href: IMG.fx_miss, x: x - sz / 2, y: y - sz / 2, width: sz, height: sz, opacity: .9 }, w); }
+    el('circle', { cx: x, cy: y, r: 10, fill: 'rgba(255,255,255,.92)', stroke: '#378ADD', 'stroke-width': 2 }, w);
     if (n !== undefined) {
       const t = el('text', { x, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 600, fill: '#0C447C' }, w);
       t.textContent = n;
@@ -259,6 +270,15 @@ if (typeof document !== 'undefined') (() => {
   }
   function drawShip(g, s, cls) {
     const w = el('g', { class: cls || '' }, g);
+    const key = SHIP_IMG[s.idx];
+    if (key && IMG[key]) {
+      // 横むきの 画像。たて置きは 90度 まわす
+      const L = s.len * C - 2, H = C * 0.86;
+      const cx = O + (s.v ? s.c + 0.5 : s.c + s.len / 2) * C, cy = O + (s.v ? s.r + s.len / 2 : s.r + 0.5) * C;
+      el('image', { href: IMG[key], x: cx - L / 2, y: cy - H / 2, width: L, height: H, preserveAspectRatio: 'none',
+        transform: s.v ? `rotate(90 ${cx} ${cy})` : '' }, w);
+      return w;
+    }
     el('path', { d: shipPath(s), fill: '#5F5E5A', stroke: '#2C2C2A', 'stroke-width': 1.5 }, w);
     const k = Math.floor(s.len * 0.42);
     const [bx, by] = at(s.v ? s.r + k : s.r, s.v ? s.c : s.c + k);
@@ -301,6 +321,12 @@ if (typeof document !== 'undefined') (() => {
   /* ---- 状態 ---- */
   let me, cpu, level = 1, myTurn = false, busy = false, shots = 0, hintHits = 0, over = false;
   let Lsetup, Lcpu, Lme;
+
+  // 画像が あとから とどいたら ならべる画面を かきなおす
+  function refreshImgs() {
+    if (!Lsetup || !me || !$('screen-setup').classList.contains('active')) return;
+    Lsetup.ships.innerHTML = ''; me.ships.forEach(s => drawShip(Lsetup.ships, s));
+  }
 
   function setupScreen() {
     me = UMI.newSide();
