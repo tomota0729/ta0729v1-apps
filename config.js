@@ -97,6 +97,15 @@ const APPS = [
     enabled: true,
     color: '#185FA5',
     description: 'ふねを さがして しずめよう'
+  },
+  {
+    id: 'gate',
+    name: 'かずの ゲート ラン',
+    emoji: '🏃',
+    url: 'apps/gate/',
+    enabled: true,
+    color: '#E8436B',
+    description: 'どっちの ゲートで ふえるかな'
   }
   // 将来のアプリはここに追加してください
   // enabled: false にすると非表示になります

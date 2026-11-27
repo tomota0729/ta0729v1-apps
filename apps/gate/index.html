@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ゲートラン">
+  <meta name="theme-color" content="#1B2F6B">
+  <link rel="apple-touch-icon" href="img/icon-180.png">
+  <link rel="icon" href="img/icon-180.png">
+  <title>かずの ゲート ラン</title>
+  <link rel="stylesheet" href="style.css?v=11">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=M+PLUS+Rounded+1c:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="cv"></canvas>
+
+  <div class="hud" id="hud" hidden>
+    <button class="home" id="btn-home" aria-label="タイトルへ">🏠</button>
+    <span class="gatecount" id="gatecount">ゲート 1/7</span>
+  </div>
+  <div class="hint" id="hint" hidden>ひだり？ みぎ？ タップして えらぼう</div>
+  <div class="pop" id="pop" hidden></div>
+
+  <!-- タイトル -->
+  <section class="panel" id="title">
+    <button class="home corner" onclick="location.href='../../'" aria-label="ホームへ もどる">🏠</button>
+    <div class="logo">
+      <img id="logo-img" alt="" hidden>
+      <p class="tag">まほうの けいさん ぼうけん</p>
+      <h1>かずの ゲート ラン</h1>
+      <p class="lead">どっちの ゲートで ふえるかな？<br>けいさんして ボスに かとう！</p>
+    </div>
+    <div class="ui-board">
+    <p class="step"><b>1</b> しゅるい</p>
+    <div class="choices three" id="ty">
+      <button data-v="0" class="c-green">たしざん</button>
+      <button data-v="1" class="c-pink">ひきざん</button>
+      <button data-v="2" class="c-purple">みっくす</button>
+    </div>
+    <p class="step"><b>2</b> なんいど</p>
+    <div class="choices three" id="lv">
+      <button data-v="0" class="c-green">かんたん</button>
+      <button data-v="1" class="c-blue">ふつう</button>
+      <button data-v="2" class="c-pink">むずかしい</button>
+    </div>
+    <p class="step"><b>3</b> もんだいの かず</p>
+    <div class="choices three" id="sp">
+      <button data-v="0" class="c-green">みじかい</button>
+      <button data-v="1" class="c-blue">ふつう</button>
+      <button data-v="2" class="c-pink">ながい</button>
+    </div>
+    <button class="go" id="btn-start">スタート</button>
+    <p class="best" id="best"></p>
+    </div>
+  </section>
+
+  <!-- けっか -->
+  <section class="panel result" id="result" hidden>
+    <div class="confetti" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="card">
+      <p class="stars" id="res-stars"></p>
+      <p class="res-title" id="res-title"></p>
+      <img class="res-chara" id="res-chara" alt="" src="img/nakama_win.png" onerror="this.hidden=true">
+      <p id="res-text"></p>
+      <ol class="log" id="res-log"></ol>
+      <div class="btns">
+        <button class="go" id="btn-retry">もういちど</button>
+        <div class="btns-sub">
+          <button class="sub c-blue" id="btn-new">あたらしい もんだい</button>
+          <button class="sub c-blue" id="btn-title">タイトルへ</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="game.js?v=19"></script>
+  <script>
+    // 結果画面：勝ち負けで なかまの絵を かえる（画像が無いときは かくす）
+    (() => {
+      const t = document.getElementById('res-title'), img = document.getElementById('res-chara'), res = document.getElementById('result');
+      new MutationObserver(() => {
+        const win = t.textContent.includes('かち');
+        res.classList.toggle('lose', !win);
+        const src = 'img/' + (win ? 'nakama_win' : 'nakama_lose') + '.png';
+        if (!img.src.endsWith(src)) { img.hidden = false; img.src = src; }
+      }).observe(t, { childList: true, characterData: true, subtree: true });
+    })();
+  </script>
+</body>
+</html>
