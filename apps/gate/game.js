@@ -276,7 +276,13 @@ if (typeof document !== 'undefined') (() => {
     }
   }
 
-  function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+  // 古い iPad（iOS 15 まで）は ctx.roundRect が ないので 自分で 描く
+  function rrect(x, y, w, h, r) {
+    r = Math.max(0, Math.min(+r || 0, w / 2, h / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
 
   // gate_frame.png（1200×579）の あいている ところ：左 188〜547、右 653〜1013、上の梁の下 146〜下まで
   const FRAME = { w: 1200, h: 579, L: [188, 547], R: [653, 1013], top: 146, outer: [51, 1149] };
