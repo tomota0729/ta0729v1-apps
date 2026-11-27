@@ -96,3 +96,32 @@ body {
 .pop { transform-box: fill-box; transform-origin: center; animation: pop .35s ease-out; }
 @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
 .reveal { animation: fadein .6s ease-out; }
+
+/* ===== 海の戦いテーマ（ナノバナナの絵に合わせる） ===== */
+:root { --navy: #1F3460; --navy-d: #142347; --gold: #E0B040; --gold-l: #F6D774; --me: #2A9BF0; --cpu: #FF7A1A; }
+body { background: #0E1A3A url("img/bg.jpg") center / cover no-repeat; color: #EAF2FF; }
+.app-title { color: var(--gold-l); text-shadow: 0 2px 0 rgba(0,0,0,.4); }
+.back-btn { background: var(--navy); border: 2px solid var(--gold); }
+.turn { border: 2px solid rgba(255,255,255,.7); box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+.turn.me { background: var(--me); }
+.turn.cpu { background: var(--cpu); }
+.lead, .block-title { color: #FFF3CF; text-shadow: 0 2px 3px rgba(0,0,0,.6); }
+.small { color: #C7D6F2; }
+.block { background: rgba(20, 35, 71, .82); border: 2px solid rgba(224,176,64,.55); box-shadow: 0 6px 16px rgba(0,0,0,.4); }
+.block.active-me { border-color: var(--me); box-shadow: 0 0 0 2px var(--me), 0 0 18px rgba(42,155,240,.6); }
+.block.active-cpu { border-color: var(--cpu); box-shadow: 0 0 0 2px var(--cpu), 0 0 18px rgba(255,122,26,.6); }
+.setup-board { background: rgba(20,35,71,.7); border-radius: 12px; padding: 4px; border: 2px solid rgba(224,176,64,.55); }
+.btn { background: var(--navy); color: var(--gold-l); border: 2px solid var(--gold); box-shadow: 0 3px 0 var(--navy-d); }
+.btn.start { background: linear-gradient(180deg, #F6D774, #E0A93B); color: #2A1A05; border-color: #FFF0B8; box-shadow: 0 4px 0 #8A5A12; }
+.lv { background: var(--navy); color: #EAF2FF; border: 2px solid #5B6B9A; }
+.lv.on { background: linear-gradient(180deg, #F6D774, #E0A93B); color: #2A1A05; border-color: #FFF0B8; }
+.legend { color: #D9E4FA; text-shadow: 0 1px 2px rgba(0,0,0,.6); }
+.msg { background: rgba(20,35,71,.9); color: #FFF3CF; border: 2px solid var(--gold); }
+.msg b { color: #FF8A7A; }
+.msg .num { color: var(--gold-l); }
+.side b { color: #FFF3CF; }
+.overlay { background: rgba(5,12,30,.6); }
+.result { background: var(--navy); color: #FFF3CF; border: 3px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+.result-art { width: min(80vw, 360px); border-radius: 12px; border: 2px solid var(--gold); }
+.cpu-board { width: min(90vw, 46dvh); }
+.me-board { width: min(46vw, 22dvh); }

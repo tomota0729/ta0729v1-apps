@@ -297,12 +297,21 @@ if (typeof document !== 'undefined') (() => {
     const L = {};
     const base = el('g', {}, svg);
     for (let i = 0; i < N; i++) {
-      el('text', { x: O + i * C + C / 2, y: 20, 'text-anchor': 'middle', 'font-size': 14, fill: '#4A5A6A' }, base).textContent = i + 1;
-      el('text', { x: 15, y: O + i * C + C / 2 + 5, 'text-anchor': 'middle', 'font-size': 14, fill: '#4A5A6A' }, base).textContent = UMI.ROWS[i];
+      el('text', { x: O + i * C + C / 2, y: 20, 'text-anchor': 'middle', 'font-size': 14, fill: '#FFF3CF' }, base).textContent = i + 1;
+      el('text', { x: 15, y: O + i * C + C / 2 + 5, 'text-anchor': 'middle', 'font-size': 14, fill: '#FFF3CF' }, base).textContent = UMI.ROWS[i];
     }
+    // 海の水面（sea_tile.png）を しきつめる。画像が なければ 青い 海
+    const pid = 'sea-' + svg.id;
+    const defs = el('defs', {}, svg);
+    const pat = el('pattern', { id: pid, patternUnits: 'userSpaceOnUse', width: 110, height: 110 }, defs);
+    el('rect', { width: 110, height: 110, fill: '#7FC4EC' }, pat);
+    el('image', { href: 'img/sea_tile.png?v=1', width: 110, height: 110, opacity: .45 }, pat);
+    el('rect', { x: O, y: O, width: N * C, height: N * C, fill: `url(#${pid})` }, svg);
+    // うすく やさしい 色に する（白を かさねる）
+    el('rect', { x: O, y: O, width: N * C, height: N * C, fill: '#FFFFFF', opacity: .35 }, svg);
     L.cells = el('g', {}, svg);
     for (let r = 0; r < N; r++) for (let c = 0; c < N; c++)
-      el('rect', { x: O + c * C, y: O + r * C, width: C, height: C, fill: '#E6F1FB', stroke: '#B5D4F4', 'stroke-width': 1, class: 'cell', 'data-r': r, 'data-c': c }, L.cells);
+      el('rect', { x: O + c * C, y: O + r * C, width: C, height: C, fill: 'rgba(255,255,255,0.01)', stroke: 'rgba(30,90,150,.35)', 'stroke-width': 1, class: 'cell', 'data-r': r, 'data-c': c }, L.cells);
     L.guide = el('g', { 'pointer-events': 'none' }, svg);
     L.frame = el('g', { 'pointer-events': 'none' }, svg);
     L.ships = el('g', { 'pointer-events': 'none' }, svg);
