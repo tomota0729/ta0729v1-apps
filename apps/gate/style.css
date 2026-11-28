@@ -291,3 +291,6 @@ body {
 #title .choices button { font-size: clamp(14px, min(4vw, 2.6vh), 20px); padding: clamp(5px, 1.1vh, 12px) 4px; }
 #title .step { font-size: clamp(12px, 1.9vh, 16px); }
 #title .go { font-size: clamp(18px, min(5vw, 3.4vh), 26px); padding: clamp(6px, 1.2vh, 12px) clamp(44px, 12vw, 72px); }
+
+/* おとの ボタン（🏠 の よこ） */
+.snd { position: fixed; top: max(8px, env(safe-area-inset-top)); left: 60px; z-index: 30; }

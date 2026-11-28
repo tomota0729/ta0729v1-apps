@@ -116,30 +116,116 @@ if (typeof document !== 'undefined') (() => {
 
   /* ---- 効果音 ---- */
   const Snd = (() => {
-    let ac = null;
-    const A = () => (ac ||= new (window.AudioContext || window.webkitAudioContext)());
-    function tone(f, d, type = 'sine', vol = .16, when = 0, f2) {
-      try {
-        const a = A(), t = a.currentTime + when, o = a.createOscillator(), g = a.createGain();
-        o.type = type; o.frequency.setValueAtTime(f, t);
-        if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
-        g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
-        o.connect(g).connect(a.destination); o.start(t); o.stop(t + d);
-      } catch (e) {}
+    let ac = null, master = null, sfxG = null, bgmG = null, noiseBuf = null;
+    let muted = false;
+    try { muted = localStorage.getItem('gate_mute') === '1'; } catch (e) {}
+    function A() {
+      if (!ac) {
+        ac = new (window.AudioContext || window.webkitAudioContext)();
+        master = ac.createGain(); master.gain.value = muted ? 0 : 1; master.connect(ac.destination);
+        sfxG = ac.createGain(); sfxG.connect(master);
+        bgmG = ac.createGain(); bgmG.gain.value = 0.45; bgmG.connect(master);
+        noiseBuf = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.6), ac.sampleRate);
+        const d = noiseBuf.getChannelData(0); for (let k = 0; k < d.length; k++) d[k] = Math.random() * 2 - 1;
+      }
+      if (ac.state === 'suspended') ac.resume();
+      return ac;
     }
+    // おと 1つ（t は 時刻）
+    function note(t, f, d, type, vol, out, f2) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g).connect(out); o.start(t); o.stop(t + d + 0.02);
+    }
+    // ざーっ という おと（シュッ・ドーン・ドラム）
+    function noise(t, d, vol, ftype, freq, out) {
+      const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      src.buffer = noiseBuf; f.type = ftype; f.frequency.value = freq;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      src.connect(f).connect(g).connect(out); src.start(t); src.stop(t + d + 0.02);
+    }
+    function tone(f, d, type = 'sine', vol = .16, when = 0, f2) {
+      try { const a = A(); note(a.currentTime + when, f, d, type, vol, sfxG, f2); } catch (e) {}
+    }
+    function nz(d, vol, ftype, freq, when = 0) {
+      try { const a = A(); noise(a.currentTime + when, d, vol, ftype, freq, sfxG); } catch (e) {}
+    }
+
+    /* ---- BGM（このゲームの オリジナル曲。8しょうせつを くりかえす） ---- */
+    const mf = m => 440 * Math.pow(2, (m - 69) / 12);
+    const SONGS = {
+      // はしる：あかるい ぼうけん（ハ長調）
+      run: { bpm: 148, lead: 'square', leadVol: 0.07,
+        roots: [48, 43, 45, 41, 48, 43, 41, 43],
+        mel: [72, 0, 76, 79, 76, 74, 72, 0,   74, 0, 79, 74, 71, 74, 79, 0,
+              76, 0, 72, 76, 81, 79, 76, 0,   77, 76, 74, 72, 74, 0, 0, 0,
+              72, 76, 79, 84, 83, 79, 76, 79, 79, 0, 74, 79, 83, 81, 79, 0,
+              77, 81, 84, 81, 77, 76, 74, 72, 74, 76, 77, 79, 74, 0, 71, 0] },
+      // ボス：はやくて どきどき（イ短調）
+      boss: { bpm: 168, lead: 'sawtooth', leadVol: 0.05,
+        roots: [45, 45, 41, 43, 45, 45, 40, 40],
+        mel: [69, 0, 72, 69, 76, 0, 75, 76,   77, 76, 74, 72, 74, 72, 71, 69,
+              65, 0, 69, 72, 77, 0, 76, 77,   79, 77, 76, 74, 71, 0, 74, 0,
+              81, 0, 76, 0, 81, 0, 84, 83,    81, 79, 77, 76, 77, 76, 74, 72,
+              71, 0, 68, 71, 76, 0, 74, 71,   68, 71, 74, 76, 80, 0, 0, 0] },
+    };
+    let cur = null, step = 0, nextT = 0, timer = null;
+    function playStep(S, st, t, dt) {
+      const bar = Math.floor(st / 16) % 8, s16 = st % 16;
+      // ドラム
+      if (s16 % 4 === 0) note(t, 150, 0.14, 'sine', 0.5, bgmG, 45);
+      if (s16 === 4 || s16 === 12) noise(t, 0.12, 0.22, 'highpass', 1500, bgmG);
+      if (s16 % 2 === 0 || cur === 'boss') noise(t, 0.035, 0.07, 'highpass', 7000, bgmG);
+      if (s16 % 2) return;
+      // ベース（8ぶ おんぷ）
+      const r = S.roots[bar];
+      note(t, mf(s16 % 4 === 0 ? r : r + 12), dt * 1.7, 'triangle', 0.22, bgmG);
+      // メロディ
+      const m = S.mel[st >> 1];
+      if (m) { note(t, mf(m), dt * 1.8, S.lead, S.leadVol, bgmG); note(t, mf(m + 12), dt * 1.2, 'sine', 0.025, bgmG); }
+    }
+    function sched() {
+      const S = SONGS[cur]; if (!S || !ac) return;
+      const dt = 60 / S.bpm / 4;
+      if (nextT < ac.currentTime - 0.1) nextT = ac.currentTime + 0.05;   // ずれたら やりなおし
+      while (nextT < ac.currentTime + 0.15) { try { playStep(S, step, nextT, dt); } catch (e) {} step = (step + 1) % 128; nextT += dt; }
+    }
+    function bgm(name) {
+      if (cur === name) return;
+      clearInterval(timer); timer = null; cur = null;
+      if (!name) return;
+      try { A(); } catch (e) { return; }
+      cur = name; step = 0; nextT = ac.currentTime + 0.1;
+      timer = setInterval(sched, 25); sched();
+    }
+    // べつの アプリに うつったら おとを とめる
+    document.addEventListener('visibilitychange', () => {
+      if (!ac) return;
+      if (document.hidden) ac.suspend(); else ac.resume();
+    });
+    function setMuted(m) {
+      muted = m;
+      try { localStorage.setItem('gate_mute', m ? '1' : '0'); } catch (e) {}
+      if (master) master.gain.setValueAtTime(m ? 0 : 1, ac.currentTime);
+    }
+
     return {
+      bgm, setMuted, get muted() { return muted; }, get playing() { return cur; },
       tap() { tone(660, .06, 'sine', .08); },
-      up() { [523, 659, 784].forEach((f, i) => tone(f, .14, 'triangle', .15, i * .07)); },
+      up() { [523, 659, 784].forEach((f, i) => tone(f, .14, 'triangle', .15, i * .07)); tone(1568, .25, 'sine', .05, .2); },
       down() { tone(440, .25, 'sine', .14, 0, 220); },
       ng() { tone(300, .3, 'square', .07, 0, 180); },
-      boss() { tone(110, .5, 'sawtooth', .1, 0, 70); },
+      boss() { tone(110, .6, 'sawtooth', .12, 0, 60); nz(.6, .25, 'lowpass', 500); },
       win() { [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, .22, 'triangle', .16, i * .13)); },
       lose() { [392, 349, 330, 262].forEach((f, i) => tone(f, .3, 'sine', .14, i * .2)); },
-      slash() { tone(1400, .08, 'sawtooth', .07, 0, 500); tone(240, .12, 'square', .08, .02, 90); },
-      throw() { tone(500, .3, 'sine', .07, 0, 160); },
-      thud() { tone(140, .25, 'triangle', .16, 0, 60); },
-      boom() { tone(90, .7, 'sawtooth', .16, 0, 35); tone(60, .9, 'square', .1, .05, 30); },
-      roar() { tone(160, .8, 'sawtooth', .13, 0, 70); tone(110, .9, 'square', .08, .1, 55); },
+      slash() { nz(.12, .35, 'highpass', 2500); tone(1400, .08, 'sawtooth', .05, 0, 500); tone(240, .12, 'square', .07, .02, 90); },
+      throw() { tone(500, .3, 'sine', .07, 0, 160); nz(.3, .12, 'bandpass', 900); },
+      thud() { tone(140, .25, 'triangle', .16, 0, 60); nz(.2, .35, 'lowpass', 400); },
+      boom() { tone(90, .7, 'sawtooth', .16, 0, 35); tone(60, .9, 'square', .1, .05, 30); nz(1.0, .6, 'lowpass', 900); },
+      roar() { tone(160, .8, 'sawtooth', .13, 0, 70); tone(110, .9, 'square', .08, .1, 55); nz(.8, .2, 'lowpass', 600); },
       cry() { [660, 880].forEach((f, i) => tone(f, .12, 'triangle', .12, i * .1)); },
     };
   })();
@@ -411,7 +497,8 @@ if (typeof document !== 'undefined') (() => {
       });
     ctx.globalAlpha = base;
     // 人数
-    if (shownN > 0 || mode !== 'battle') badge(x, y - r * (2.9 + (rows - 1) * 0.75), String(Math.max(0, n)), '#1E5AA8', hw * (mode === 'battle' ? 0.12 : 0.085) * Math.max(.8, sc));
+    if (mode === 'battle') { if (shownN > 0) badge(x, Math.min(H - hw * 0.1, y + r * 1.1), 'なかま ' + Math.max(0, n), '#1E5AA8', hw * 0.075); }
+    else badge(x, y - r * (2.9 + (rows - 1) * 0.75), String(Math.max(0, n)), '#1E5AA8', hw * 0.085 * Math.max(.8, sc));
     ctx.restore();
   }
 
@@ -523,7 +610,10 @@ if (typeof document !== 'undefined') (() => {
     }
     ctx.restore();
     if (bossFall >= 1) return;
-    if (mode === 'battle' || mode === 'result') hpBar(W / 2, y - size * 1.42, Math.max(180, size * 1.15), bossShown, stage.boss);
+    if (mode === 'battle' || mode === 'result') {
+      const bw = Math.min(W * 0.6, Math.max(180, size * 1.0)), bh = Math.max(20, bw * 0.11);
+      hpBar(W / 2, Math.max(64 + bh / 2, y - size * 1.3 - bh * 0.95), bw, bossShown, stage.boss);
+    }
     else badge(W / 2, y - size * 1.35, 'ボス ' + Math.max(0, Math.round(bossShown)), '#C2410C', Math.max(12, hw * 0.075 * Math.max(s, .55)));
   }
 
@@ -572,7 +662,19 @@ if (typeof document !== 'undefined') (() => {
 
   // うえの「はやく」ゾーンの めじるし
   function drawBoostZone() {
-    const y = boostLine(), on = mode === 'battle' ? bboost > 0 : boost > 0;
+    if (mode === 'battle') {
+      if (adv < 1 || bt >= tEnd) return;
+      const fs = Math.max(16, Math.min(26, W * 0.03)), on = bboost > 0;
+      const k = on ? 1.08 : 1 + Math.sin(performance.now() / 250) * 0.04;
+      ctx.save(); ctx.translate(W / 2, H - fs * 1.4); ctx.scale(k, k);
+      ctx.font = `800 ${fs}px "M PLUS Rounded 1c", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const t = on ? 'こうげき！ こうげき！' : 'タップで こうげき！';
+      ctx.lineJoin = 'round'; ctx.lineWidth = fs * 0.28; ctx.strokeStyle = 'rgba(20,30,60,.85)'; ctx.strokeText(t, 0, 0);
+      ctx.fillStyle = on ? '#FFE27A' : '#fff'; ctx.fillText(t, 0, 0);
+      ctx.restore();
+      return;
+    }
+    const y = boostLine(), on = boost > 0;
     ctx.fillStyle = on ? 'rgba(255,215,90,.22)' : 'rgba(255,255,255,.10)';
     ctx.fillRect(0, 56, W, y - 56);
     ctx.setLineDash([8, 8]); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2;
@@ -580,7 +682,7 @@ if (typeof document !== 'undefined') (() => {
     const fs = Math.max(13, Math.min(20, W * 0.022));
     ctx.font = `800 ${fs}px "M PLUS Rounded 1c", sans-serif`; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
     ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(20,30,60,.7)';
-    const t = mode === 'battle' ? (on ? '▲▲ はやおくり！' : '▲ ここを タップで はやおくり') : (on ? '▲▲ はやく！' : '▲ ここを タップで はやく');
+    const t = on ? '▲▲ はやく！' : '▲ ここを タップで はやく';
     ctx.strokeText(t, W - 12, y - 6); ctx.fillStyle = on ? '#FFE27A' : '#fff'; ctx.fillText(t, W - 12, y - 6);
   }
 
@@ -642,7 +744,7 @@ if (typeof document !== 'undefined') (() => {
 
   function startBattle() {
     mode = 'battle'; bt = 0; bboost = 0;
-    $('pop').hidden = true; $('hint').hidden = true; Snd.boss();
+    $('pop').hidden = true; $('hint').hidden = true; Snd.boss(); Snd.bgm('boss');
     const A = n, B = stage.boss, m = Math.min(A, B);
     battle.from = A; battle.win = A > B; battle.m = m; battle.tie = A === B; side = 0;
     bossShown = B; fx = []; banner = null; darken = 0; glow = 0; hop = 0; hurt = 0; roar = 0; eyes = 0;
@@ -663,13 +765,23 @@ if (typeof document !== 'undefined') (() => {
     tEnd = events[events.length - 1].at + 0.9;
   }
 
+  function tapAttack() {
+    if (mode !== 'battle') return;
+    bboost = Math.min(1.2, Math.max(0, bboost) + 0.4);
+    if (adv < 1 || bt >= tEnd - 0.2) return;
+    if (fx.filter(f => f.tap && !f.hitDone).length >= 5) return;
+    const B = bossGeom(), K = knightFront(), o = SPOTS[Math.floor(Math.random() * Math.min(5, Math.max(1, shownN)))];
+    fx.push({ type: 'charger', tap: true, s: bt, dur: 0.3, x0: K.x + o[0] * K.r, y0: K.y - K.r * 0.2, r0: K.r,
+      x1: B.cx + (Math.random() - .5) * B.size * 0.5, y1: B.y - B.size * (0.3 + Math.random() * 0.3), r1: halfW() * 0.11 * B.s, dmg: 0 });
+  }
+
   function knightFront() {          // 隊列の まえの はしの 位置
     const { x, y, sc } = crowdPos(), r = halfW() * 0.11 * sc;
     return { x, y, r };
   }
 
   function updateBattle(dt) {
-    const mul = bboost > 0 ? 2.4 : 1;
+    const mul = bboost > 0 ? 1.8 : 1;
     if (bboost > 0) bboost -= dt;
     const step = dt * mul;
     bt += step;
@@ -702,6 +814,7 @@ if (typeof document !== 'undefined') (() => {
         f.hitDone = true;
         if (f.type === 'charger') {
           if (f.dmg) { bossShown = Math.max(battle.tie ? 1 : stage.boss - battle.m, bossShown - f.dmg); hurt = 1; shake(6, .2); Snd.slash(); }
+          else if (f.tap) { hurt = Math.max(hurt, 0.5); shake(3, .1); Snd.slash(); }
           fx.push({ type: 'slash', s: bt, dur: 0.28, x: f.x1, y: f.y1 - f.r1 * 1.2, R: Math.max(30, bossGeom().size * 0.32), rot: Math.random() * Math.PI });
           sparks(f.x1, f.y1 - f.r1, 9);
         } else {
@@ -834,7 +947,7 @@ if (typeof document !== 'undefined') (() => {
 
   function showResult(win) {
     $('hud').hidden = true; $('hint').hidden = true;
-    win ? Snd.win() : Snd.lose();
+    Snd.bgm(null); win ? Snd.win() : Snd.lose();
     const stars = win ? (correct === CNT() ? 3 : correct === CNT() - 1 ? 2 : 1) : 0;
     $('res-title').textContent = win ? 'かち！ 🎉' : 'まけ…';
     $('res-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
@@ -859,11 +972,11 @@ if (typeof document !== 'undefined') (() => {
     $('title').hidden = true; $('result').hidden = true; $('pop').hidden = true;
     $('hud').hidden = false; $('gatecount').textContent = `ゲート 1/${CNT()}`;
     $('hint').textContent = 'したを タップで ひだり・みぎ ／ うえ（そら）を タップで はやく'; $('hint').hidden = false;
-    mode = 'run';
+    mode = 'run'; Snd.bgm('run');
   }
 
   function toTitle() {
-    mode = 'title'; stage = GATE.makeStage(ty, df, LENS[sp]);
+    mode = 'title'; Snd.bgm(null); stage = GATE.makeStage(ty, df, LENS[sp]);
     adv = 0; knock = 0; bossFall = 0; parts = [];
     fx = []; banner = null; darken = 0; glow = 0; hop = 0; hurt = 0; roar = 0; shakeT = 0;
     $('hud').hidden = true; $('hint').hidden = true; $('pop').hidden = true; $('result').hidden = true;
@@ -882,7 +995,7 @@ if (typeof document !== 'undefined') (() => {
 
   /* ---- そうさ ---- */
   cv.addEventListener('pointerdown', e => {
-    if (mode === 'battle') { if (e.clientY < boostLine()) { bboost = 1.2; Snd.tap(); } return; }
+    if (mode === 'battle') { tapAttack(); return; }
     if (mode !== 'run') return;
     // うえの ほう（空）を タップ → かそく ／ したの ほう → ひだり・みぎを えらぶ（かそく しない）
     if (e.clientY < boostLine()) boost = 0.7;
@@ -891,6 +1004,7 @@ if (typeof document !== 'undefined') (() => {
     Snd.tap();
   });
   addEventListener('keydown', e => {
+    if (mode === 'battle' && (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'Enter')) { e.preventDefault(); tapAttack(); return; }
     if (mode !== 'run') return;
     if (e.key === 'ArrowLeft') side = -1; else if (e.key === 'ArrowRight') side = 1;
     else if (e.key === 'ArrowUp' || e.key === ' ') boost = 0.7; else return;
@@ -898,6 +1012,10 @@ if (typeof document !== 'undefined') (() => {
   document.querySelectorAll('#ty button').forEach(b => b.addEventListener('click', () => { ty = +b.dataset.v; Snd.tap(); try { localStorage.setItem('gate_ty', ty); } catch (e) {} renderTitle(); }));
   document.querySelectorAll('#lv button').forEach(b => b.addEventListener('click', () => { df = +b.dataset.v; Snd.tap(); try { localStorage.setItem('gate_df', df); } catch (e) {} renderTitle(); }));
   document.querySelectorAll('#sp button').forEach(b => b.addEventListener('click', () => { sp = +b.dataset.v; Snd.tap(); try { localStorage.setItem('gate_len', sp); } catch (e) {} renderTitle(); }));
+  const sndBtn = $('btn-snd');
+  const showSnd = () => { sndBtn.textContent = Snd.muted ? '🔇' : '🔊'; sndBtn.setAttribute('aria-label', Snd.muted ? 'おとを だす' : 'おとを けす'); };
+  sndBtn.addEventListener('click', e => { e.stopPropagation(); Snd.setMuted(!Snd.muted); showSnd(); });
+  showSnd();
   $('btn-start').addEventListener('click', () => { Snd.tap(); begin(true); });
   $('btn-retry').addEventListener('click', () => { Snd.tap(); begin(false); });
   $('btn-new').addEventListener('click', () => { Snd.tap(); begin(true); });
@@ -909,5 +1027,5 @@ if (typeof document !== 'undefined') (() => {
   (function idle() { if (mode === 'title') { cam += 0.01; if (cam > 6) cam = 0; } requestAnimationFrame(idle); })();
   renderTitle();
   requestAnimationFrame(frame);
-  if (/[?&]test=1/.test(location.search)) window.__gate = { get stage() { return stage; }, get n() { return n; }, get mode() { return mode; }, get next() { return next; }, get waiting() { return waiting; }, get bt() { return bt; }, get bossHP() { return bossShown; }, get tEnd() { return tEnd; }, setN(v) { n = v; } };
+  if (/[?&]test=1/.test(location.search)) window.__gate = { get stage() { return stage; }, get n() { return n; }, get mode() { return mode; }, get next() { return next; }, get waiting() { return waiting; }, get bt() { return bt; }, get bossHP() { return bossShown; }, get tEnd() { return tEnd; }, get bgm() { return Snd.playing; }, tap: () => tapAttack(), setN(v) { n = v; } };
 })();
